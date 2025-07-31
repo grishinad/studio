@@ -3,7 +3,6 @@ import {
   endOfYear,
   format,
   getISODay,
-  getISOWeek,
   getMonth,
   startOfYear,
 } from 'date-fns';
@@ -35,27 +34,6 @@ export const getMonthHeaders = (days: Date[]) => {
   });
   months.push({ name: monthName, dayCount });
   return months;
-};
-
-export const getWeekHeaders = (days: Date[]) => {
-  const weeks: { name: string; dayCount: number }[] = [];
-  if (!days.length) return weeks;
-
-  let currentWeek = getISOWeek(days[0]);
-  let dayCount = 0;
-
-  days.forEach((day, index) => {
-    const week = getISOWeek(day);
-    if (week === currentWeek) {
-      dayCount++;
-    } else {
-      weeks.push({ name: `Н${currentWeek}`, dayCount });
-      currentWeek = week;
-      dayCount = 1;
-    }
-  });
-  weeks.push({ name: `Н${currentWeek}`, dayCount });
-  return weeks;
 };
 
 export const getDayOfWeekCharacter = (day: Date) => {

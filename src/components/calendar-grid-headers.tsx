@@ -4,7 +4,6 @@ import {
   getDayOfMonth,
   getDayOfWeekCharacter,
   getMonthHeaders,
-  getWeekHeaders,
 } from '@/lib/dates';
 import type { Holiday } from '@/types';
 import { isSameDay } from 'date-fns';
@@ -21,7 +20,6 @@ export function CalendarGridHeaders({
   holidays,
 }: CalendarGridHeadersProps) {
   const monthHeaders = getMonthHeaders(daysInYear);
-  const weekHeaders = getWeekHeaders(daysInYear);
 
   const getHolidayForDay = (day: Date) => holidays.find(h => isSameDay(h.date, day));
 
@@ -29,7 +27,7 @@ export function CalendarGridHeaders({
     <thead className="text-xs text-muted-foreground sticky top-0 z-20 bg-background/95 backdrop-blur">
       {/* Employee Header */}
       <tr className="text-center">
-        <th rowSpan={4} className="sticky left-0 bg-background/95 p-2 font-semibold text-sm border-b border-r align-middle">
+        <th rowSpan={3} className="sticky left-0 bg-background/95 p-2 font-semibold text-sm border-b border-r align-middle">
           Сотрудник
         </th>
         {monthHeaders.map(({ name, dayCount }) => (
@@ -37,18 +35,6 @@ export function CalendarGridHeaders({
             key={name}
             colSpan={dayCount}
             className="p-1.5 font-semibold text-sm border-b border-r"
-          >
-            {name}
-          </th>
-        ))}
-      </tr>
-      {/* Week Header */}
-      <tr className="text-center">
-        {weekHeaders.map(({ name, dayCount }) => (
-          <th
-            key={name}
-            colSpan={dayCount}
-            className="p-1 font-medium border-b border-r"
           >
             {name}
           </th>
@@ -71,7 +57,7 @@ export function CalendarGridHeaders({
             <th
               key={day.toISOString()}
               className={cn(
-                'p-1 font-normal border-b border-r w-10',
+                'p-1 font-normal border-b border-r w-10 text-sm',
                 holiday && 'bg-accent/50'
               )}
             >
