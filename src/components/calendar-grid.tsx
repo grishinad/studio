@@ -76,12 +76,12 @@ export function CalendarGrid({
           <td
             key={format(day, 'yyyy-MM-dd')}
             colSpan={colSpan}
-            className="p-1 h-7"
+            className="p-0.5 h-5"
           >
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <div className={cn("transition-colors duration-200 rounded-lg h-full flex items-center justify-center text-xs px-2 shadow cursor-help", getAbsenceTypeColor(absence.absenceType))}>
+                  <div className={cn("transition-colors duration-200 rounded-md h-full flex items-center justify-center text-xs px-2 shadow-sm cursor-help", getAbsenceTypeColor(absence.absenceType))}>
                     <span className="truncate">{absenceBarText}</span>
                   </div>
                 </TooltipTrigger>
@@ -103,7 +103,7 @@ export function CalendarGrid({
           <td
             key={format(day, 'yyyy-MM-dd')}
             className={cn(
-              'h-7 w-10 border-r',
+              'h-5 w-10 border-r',
               isWeekend(day) && 'bg-muted/50',
             )}
           />
