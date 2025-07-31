@@ -22,10 +22,10 @@ export function CalendarGridHeaders({
   const monthHeaders = getMonthHeaders(daysInPeriod);
 
   return (
-    <thead className="text-xs text-muted-foreground sticky top-0 bg-background/95 z-20">
+    <thead className="text-xs text-muted-foreground sticky top-0 bg-background z-20">
       {/* Month Header */}
       <tr className="text-center">
-        <th rowSpan={2} className="sticky left-0 bg-background/95 p-2 font-semibold text-sm border-b border-r border-border align-middle z-30">
+        <th rowSpan={2} className="sticky left-0 bg-background p-2 font-semibold text-sm border-b border-r border-border align-middle z-30">
           Сотрудник
         </th>
         {monthHeaders.map(({ name, dayCount, year }) => (
