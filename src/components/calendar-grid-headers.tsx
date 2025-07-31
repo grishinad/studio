@@ -32,7 +32,7 @@ export function CalendarGridHeaders({
           <th
             key={name}
             colSpan={dayCount}
-            className="p-1.5 font-semibold text-lg border-b border-r border-border"
+            className="p-1.5 font-semibold text-lg border-b border-r border-border relative z-20"
           >
             <div className="flex items-center justify-center gap-2">
               <Button variant="outline" size="icon" className="h-7 w-7" onClick={onPrevMonth}>
@@ -53,7 +53,7 @@ export function CalendarGridHeaders({
           return (
             <th
               key={day.toISOString()}
-              className='p-1 font-normal border-b border-r border-border w-10 text-sm'
+              className='p-1 font-normal border-b border-r border-border w-10 text-sm relative z-20'
             >
               <div>{dayOfWeek}</div>
               <span className="text-lg font-medium">{getDayOfMonth(day)}</span>
