@@ -1,6 +1,7 @@
 export type Organization = {
   id: string;
   name: string;
+  chief?: string;
 };
 
 export type Absence = {
@@ -10,4 +11,9 @@ export type Absence = {
   endDate: Date;
   absenceType: string;
   replacement?: string;
+};
+
+export type Holiday = {
+  date: string;
+  name: string;
 };

@@ -1,65 +1,78 @@
-const API_BASE_URL = 'YOUR_BACKEND_API_URL'; // Replace with your actual backend URL
+'use server';
 
-export const getEmployees = async () => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/employees`);
-    if (!response.ok) {
-      throw new Error('Failed to fetch employees');
-    }
-    return await response.json();
-  } catch (error) {
-    console.error('Error fetching employees:', error);
-    throw error; // Re-throw to be handled by the caller
-  }
+import type { Absence, Organization } from "@/types";
+
+type BackendAbsence = {
+  from: number; // timestamp
+  to: number; // timestamp
+  type: string;
+  deputy?: string;
 };
 
-export const addEmployee = async (employeeData: { name: string }) => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/employees`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+type BackendOrganizationData = {
+  organization: string;
+  chief: string;
+  absences: BackendAbsence[];
+};
+
+type ApiResponse = {
+  items: BackendOrganizationData[];
+};
+
+export const fetchDataForMonth = async (year: number, month: number): Promise<{ organizations: Organization[], absences: Absence[] }> => {
+  // Mocking the API response as the backend is not implemented.
+  // In a real scenario, you would fetch from an actual API endpoint.
+  // const response = await fetch(`${API_BASE_URL}/data?year=${year}&month=${month}`);
+  // const data: ApiResponse = await response.json();
+  
+  console.log(`Fetching data for ${year}-${month + 1}`);
+
+  const mockData: ApiResponse = {
+    items: [
+      {
+        organization: 'ООО "Ромашка"',
+        chief: 'Иванов Иван Иванович',
+        absences: [
+          { from: new Date(year, month, 10).getTime(), to: new Date(year, month, 14).getTime(), type: 'отпуск ежегодный', deputy: 'Сергей Смирнов' },
+        ]
       },
-      body: JSON.stringify(employeeData),
-    });
-    if (!response.ok) {
-      throw new Error('Failed to add employee');
-    }
-    return await response.json();
-  } catch (error) {
-    console.error('Error adding employee:', error);
-    throw error;
-  }
-};
-
-export const getAbsences = async () => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/absences`);
-    if (!response.ok) {
-      throw new Error('Failed to fetch absences');
-    }
-    return await response.json();
-  } catch (error) {
-    console.error('Error fetching absences:', error);
-    throw error;
-  }
-};
-
-export const addAbsence = async (absenceData: { employeeId: string; startDate: string; endDate: string }) => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/absences`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+      {
+        organization: 'ИП Петров',
+        chief: 'Петров Петр Петрович',
+        absences: [
+            { from: new Date(year, month, 20).getTime(), to: new Date(year, month, 28).getTime(), type: 'больничный' },
+        ]
       },
-      body: JSON.stringify(absenceData),
+      {
+        organization: 'АО "Вымпел"',
+        chief: 'Сидоров Сидор Сидорович',
+        absences: []
+      }
+    ]
+  };
+
+  const organizations: Organization[] = [];
+  const absences: Absence[] = [];
+
+  mockData.items.forEach((item, index) => {
+    const orgId = String(index + 1);
+    organizations.push({
+      id: orgId,
+      name: item.organization,
+      chief: item.chief,
     });
-    if (!response.ok) {
-      throw new Error('Failed to add absence');
-    }
-    return await response.json();
-  } catch (error) {
-    console.error('Error adding absence:', error);
-    throw error;
-  }
+
+    item.absences.forEach(backendAbsence => {
+      absences.push({
+        id: crypto.randomUUID(),
+        organizationId: orgId,
+        startDate: new Date(backendAbsence.from),
+        endDate: new Date(backendAbsence.to),
+        absenceType: backendAbsence.type,
+        replacement: backendAbsence.deputy,
+      });
+    });
+  });
+
+  return { organizations, absences };
 };

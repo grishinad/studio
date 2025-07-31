@@ -3,10 +3,8 @@
 import {
   differenceInCalendarDays,
   format,
-  isSameDay,
   isWithinInterval,
 } from 'date-fns';
-import { ru } from 'date-fns/locale';
 
 import { CalendarGridHeaders } from '@/components/calendar-grid-headers';
 import { isWeekend } from '@/lib/dates';
@@ -91,6 +89,7 @@ export function CalendarGrid({
                   <div className="space-y-1">
                     <p className="font-bold text-base">{absence.absenceType}</p>
                     <p>{format(absence.startDate, 'dd.MM.yyyy')} - {format(absence.endDate, 'dd.MM.yyyy')}</p>
+                    {organization.chief && <p>Главный врач: {organization.chief}</p>}
                     {absence.replacement && <p>Исполняющий обязанности: {absence.replacement}</p>}
                   </div>
                 </TooltipContent>
@@ -133,7 +132,8 @@ export function CalendarGrid({
           {organizations.map(organization => (
             <tr key={organization.id} className="border-t hover:bg-muted/30">
               <th className="sticky left-0 bg-card hover:bg-muted/30 p-2 font-medium text-left border-r whitespace-nowrap z-10">
-                {organization.name}
+                <div className="font-semibold">{organization.name}</div>
+                {organization.chief && <div className="text-xs font-normal text-muted-foreground">{organization.chief}</div>}
               </th>
               {renderOrganizationRow(organization)}
             </tr>

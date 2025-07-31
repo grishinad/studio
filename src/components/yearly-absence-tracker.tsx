@@ -15,32 +15,44 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { getDaysInMonthForYear, MONTHS } from '@/lib/dates';
 import type { Absence, Organization } from '@/types';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import type { DateRange } from 'react-day-picker';
-
-const INITIAL_ORGANIZATIONS: Organization[] = [
-  { id: '1', name: 'ООО "Ромашка"' },
-  { id: '2', name: 'ИП Петров' },
-  { id: '3', name: 'АО "Вымпел"' },
-];
-
-const INITIAL_ABSENCES: Absence[] = [
-    { id: '1', organizationId: '1', startDate: new Date(new Date().getFullYear(), 0, 10), endDate: new Date(new Date().getFullYear(), 0, 14), absenceType: 'отпуск ежегодный', replacement: 'Сергей Смирнов' },
-    { id: '2', organizationId: '2', startDate: new Date(new Date().getFullYear(), 1, 20), endDate: new Date(new Date().getFullYear(), 1, 28), absenceType: 'больничный' },
-];
-
+import { fetchDataForMonth } from '@/services/api';
 
 export default function YearlyAbsenceTracker() {
   const [year, setYear] = useState(new Date().getFullYear());
   const [month, setMonth] = useState(new Date().getMonth());
-  const [organizations, setOrganizations] = useState<Organization[]>(INITIAL_ORGANIZATIONS);
-  const [absences, setAbsences] = useState<Absence[]>(INITIAL_ABSENCES);
+  const [organizations, setOrganizations] = useState<Organization[]>([]);
+  const [absences, setAbsences] = useState<Absence[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
   const daysInMonth = useMemo(() => getDaysInMonthForYear(year, month), [year, month]);
 
+  const loadData = useCallback(async (y: number, m: number) => {
+    setIsLoading(true);
+    try {
+      const { organizations: orgs, absences: abs } = await fetchDataForMonth(y, m);
+      setOrganizations(orgs);
+      setAbsences(abs);
+    } catch (error) {
+      console.error("Failed to fetch data", error);
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось загрузить данные. Попробуйте снова.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [toast]);
+
+  useEffect(() => {
+    loadData(year, month);
+  }, [year, month, loadData]);
+
   const handleAddOrganization = (name: string) => {
-    const newOrganization = { id: crypto.randomUUID(), name };
+    const newOrganization = { id: crypto.randomUUID(), name, chief: 'Не назначен' };
     setOrganizations(prev => [...prev, newOrganization]);
     toast({
       title: 'Организация добавлена',
@@ -159,14 +171,17 @@ export default function YearlyAbsenceTracker() {
           </div>
         </div>
       </div>
-
-      <CalendarGrid
-        daysInPeriod={daysInMonth}
-        organizations={organizations}
-        absences={absences}
-        onPrevMonth={handlePrevMonth}
-        onNextMonth={handleNextMonth}
-      />
+      {isLoading ? (
+        <div className="text-center p-8">Загрузка данных...</div>
+      ) : (
+        <CalendarGrid
+          daysInPeriod={daysInMonth}
+          organizations={organizations}
+          absences={absences}
+          onPrevMonth={handlePrevMonth}
+          onNextMonth={handleNextMonth}
+        />
+      )}
     </div>
   );
 }
