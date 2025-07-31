@@ -39,14 +39,14 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
-import type { Employee } from '@/types';
+import type { Organization } from '@/types';
 import { useState } from 'react';
 import { ru } from 'date-fns/locale';
 import { Input } from './ui/input';
 
 const formSchema = z
   .object({
-    employeeId: z.string({ required_error: 'Пожалуйста, выберите сотрудника.' }),
+    organizationId: z.string({ required_error: 'Пожалуйста, выберите организацию.' }),
     dateRange: z.object({
       from: z.date({ required_error: 'Требуется дата начала.' }),
       to: z.date({ required_error: 'Требуется дата окончания.' }),
@@ -60,9 +60,9 @@ const formSchema = z
   });
 
 type AddAbsenceDialogProps = {
-  employees: Employee[];
+  organizations: Organization[];
   onAddAbsence: (
-    employeeId: string,
+    organizationId: string,
     dateRange: DateRange,
     absenceType: string,
     replacement?: string
@@ -70,7 +70,7 @@ type AddAbsenceDialogProps = {
 };
 
 export function AddAbsenceDialog({
-  employees,
+  organizations,
   onAddAbsence,
 }: AddAbsenceDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -80,7 +80,7 @@ export function AddAbsenceDialog({
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     if (values.dateRange.from && values.dateRange.to) {
-      onAddAbsence(values.employeeId, values.dateRange, values.absenceType, values.replacement);
+      onAddAbsence(values.organizationId, values.dateRange, values.absenceType, values.replacement);
       form.reset();
       setIsOpen(false);
     }
@@ -106,32 +106,32 @@ export function AddAbsenceDialog({
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Добавить отсутствие сотрудника</DialogTitle>
+          <DialogTitle>Добавить отсутствие</DialogTitle>
           <DialogDescription>
-            Выберите сотрудника, диапазон дат и тип его отсутствия.
+            Выберите организацию, диапазон дат и тип отсутствия.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField
               control={form.control}
-              name="employeeId"
+              name="organizationId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Сотрудник</FormLabel>
+                  <FormLabel>Организация</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Выберите сотрудника" />
+                        <SelectValue placeholder="Выберите организацию" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {employees.map(employee => (
-                        <SelectItem key={employee.id} value={employee.id}>
-                          {employee.name}
+                      {organizations.map(organization => (
+                        <SelectItem key={organization.id} value={organization.id}>
+                          {organization.name}
                         </SelectItem>
                       ))}
                     </SelectContent>

@@ -28,15 +28,15 @@ import { useState } from 'react';
 
 const formSchema = z.object({
   name: z.string().min(2, {
-    message: 'Имя должно содержать не менее 2 символов.',
+    message: 'Название должно содержать не менее 2 символов.',
   }),
 });
 
-type AddEmployeeDialogProps = {
-  onAddEmployee: (name: string) => void;
+type AddOrganizationDialogProps = {
+  onAddOrganization: (name: string) => void;
 };
 
-export function AddEmployeeDialog({ onAddEmployee }: AddEmployeeDialogProps) {
+export function AddOrganizationDialog({ onAddOrganization }: AddOrganizationDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -46,7 +46,7 @@ export function AddEmployeeDialog({ onAddEmployee }: AddEmployeeDialogProps) {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    onAddEmployee(values.name);
+    onAddOrganization(values.name);
     form.reset();
     setIsOpen(false);
   }
@@ -56,14 +56,14 @@ export function AddEmployeeDialog({ onAddEmployee }: AddEmployeeDialogProps) {
       <DialogTrigger asChild>
         <Button>
           <PlusCircle />
-          Добавить сотрудника
+          Добавить организацию
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Добавить нового сотрудника</DialogTitle>
+          <DialogTitle>Добавить новую организацию</DialogTitle>
           <DialogDescription>
-            Введите имя нового сотрудника, чтобы добавить его в трекер.
+            Введите название новой организации, чтобы добавить ее в трекер.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -73,16 +73,16 @@ export function AddEmployeeDialog({ onAddEmployee }: AddEmployeeDialogProps) {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Имя сотрудника</FormLabel>
+                  <FormLabel>Название организации</FormLabel>
                   <FormControl>
-                    <Input placeholder="например, Иван Иванов" {...field} />
+                    <Input placeholder="например, ООО 'Ромашка'" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <DialogFooter>
-              <Button type="submit">Добавить сотрудника</Button>
+              <Button type="submit">Добавить организацию</Button>
             </DialogFooter>
           </form>
         </Form>

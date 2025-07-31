@@ -1,7 +1,7 @@
 'use client';
 
 import { AddAbsenceDialog } from '@/components/add-absence-dialog';
-import { AddEmployeeDialog } from '@/components/add-employee-dialog';
+import { AddOrganizationDialog } from '@/components/add-organization-dialog';
 import { CalendarGrid } from '@/components/calendar-grid';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -14,42 +14,42 @@ import {
 } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { getDaysInMonthForYear, MONTHS } from '@/lib/dates';
-import type { Absence, Employee } from '@/types';
+import type { Absence, Organization } from '@/types';
 import { useState, useMemo } from 'react';
 import type { DateRange } from 'react-day-picker';
 
-const INITIAL_EMPLOYEES: Employee[] = [
-  { id: '1', name: 'Анна Иванова' },
-  { id: '2', name: 'Борис Петров' },
-  { id: '3', name: 'Карл Сидоров' },
+const INITIAL_ORGANIZATIONS: Organization[] = [
+  { id: '1', name: 'ООО "Ромашка"' },
+  { id: '2', name: 'ИП Петров' },
+  { id: '3', name: 'АО "Вымпел"' },
 ];
 
 const INITIAL_ABSENCES: Absence[] = [
-    { id: '1', employeeId: '1', startDate: new Date(new Date().getFullYear(), 0, 10), endDate: new Date(new Date().getFullYear(), 0, 14), absenceType: 'отпуск ежегодный', replacement: 'Сергей Смирнов' },
-    { id: '2', employeeId: '2', startDate: new Date(new Date().getFullYear(), 1, 20), endDate: new Date(new Date().getFullYear(), 1, 28), absenceType: 'больничный' },
+    { id: '1', organizationId: '1', startDate: new Date(new Date().getFullYear(), 0, 10), endDate: new Date(new Date().getFullYear(), 0, 14), absenceType: 'отпуск ежегодный', replacement: 'Сергей Смирнов' },
+    { id: '2', organizationId: '2', startDate: new Date(new Date().getFullYear(), 1, 20), endDate: new Date(new Date().getFullYear(), 1, 28), absenceType: 'больничный' },
 ];
 
 
 export default function YearlyAbsenceTracker() {
   const [year, setYear] = useState(new Date().getFullYear());
   const [month, setMonth] = useState(new Date().getMonth());
-  const [employees, setEmployees] = useState<Employee[]>(INITIAL_EMPLOYEES);
+  const [organizations, setOrganizations] = useState<Organization[]>(INITIAL_ORGANIZATIONS);
   const [absences, setAbsences] = useState<Absence[]>(INITIAL_ABSENCES);
   const { toast } = useToast();
 
   const daysInMonth = useMemo(() => getDaysInMonthForYear(year, month), [year, month]);
 
-  const handleAddEmployee = (name: string) => {
-    const newEmployee = { id: crypto.randomUUID(), name };
-    setEmployees(prev => [...prev, newEmployee]);
+  const handleAddOrganization = (name: string) => {
+    const newOrganization = { id: crypto.randomUUID(), name };
+    setOrganizations(prev => [...prev, newOrganization]);
     toast({
-      title: 'Сотрудник добавлен',
-      description: `${name} был добавлен в трекер.`,
+      title: 'Организация добавлена',
+      description: `${name} была добавлена в трекер.`,
     });
   };
 
   const handleAddAbsence = (
-    employeeId: string,
+    organizationId: string,
     dateRange: DateRange,
     absenceType: string,
     replacement?: string
@@ -57,17 +57,17 @@ export default function YearlyAbsenceTracker() {
     if (dateRange.from && dateRange.to) {
       const newAbsence = {
         id: crypto.randomUUID(),
-        employeeId,
+        organizationId,
         startDate: dateRange.from,
         endDate: dateRange.to,
         absenceType,
         replacement,
       };
       setAbsences(prev => [...prev, newAbsence]);
-      const employee = employees.find(e => e.id === employeeId);
+      const organization = organizations.find(e => e.id === organizationId);
       toast({
         title: 'Отсутствие добавлено',
-        description: `Отсутствие для ${employee?.name} было записано.`,
+        description: `Отсутствие для ${organization?.name} было записано.`,
       });
     }
   };
@@ -113,7 +113,7 @@ export default function YearlyAbsenceTracker() {
           Трекер отсутствий
         </h1>
         <p className="text-muted-foreground">
-          Планируйте и визуализируйте отсутствия сотрудников в течение года.
+          Планируйте и визуализируйте отсутствия по организациям в течение года.
         </p>
       </header>
 
@@ -152,17 +152,17 @@ export default function YearlyAbsenceTracker() {
 
           <div className="flex gap-2">
              <AddAbsenceDialog
-              employees={employees}
+              organizations={organizations}
               onAddAbsence={handleAddAbsence}
             />
-            <AddEmployeeDialog onAddEmployee={handleAddEmployee} />
+            <AddOrganizationDialog onAddOrganization={handleAddOrganization} />
           </div>
         </div>
       </div>
 
       <CalendarGrid
         daysInPeriod={daysInMonth}
-        employees={employees}
+        organizations={organizations}
         absences={absences}
         onPrevMonth={handlePrevMonth}
         onNextMonth={handleNextMonth}

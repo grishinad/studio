@@ -26,7 +26,7 @@ export function CalendarGridHeaders({
       {/* Month Header */}
       <tr className="text-center">
         <th rowSpan={2} className="sticky left-0 bg-background p-2 font-semibold text-sm border-b border-r border-border align-middle z-30">
-          Сотрудник
+          Организация
         </th>
         {monthHeaders.map(({ name, dayCount, year }) => (
           <th

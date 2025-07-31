@@ -11,12 +11,12 @@ import { ru } from 'date-fns/locale';
 import { CalendarGridHeaders } from '@/components/calendar-grid-headers';
 import { isWeekend } from '@/lib/dates';
 import { cn } from '@/lib/utils';
-import type { Absence, Employee } from '@/types';
+import type { Absence, Organization } from '@/types';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 
 type CalendarGridProps = {
   daysInPeriod: Date[];
-  employees: Employee[];
+  organizations: Organization[];
   absences: Absence[];
   onPrevMonth: () => void;
   onNextMonth: () => void;
@@ -45,22 +45,22 @@ const getAbsenceTypeColor = (absenceType: string) => {
 
 export function CalendarGrid({
   daysInPeriod,
-  employees,
+  organizations,
   absences,
   onPrevMonth,
   onNextMonth,
 }: CalendarGridProps) {
-  const getAbsencesForEmployee = (employeeId: string) => {
-    return absences.filter(absence => absence.employeeId === employeeId);
+  const getAbsencesForOrganization = (organizationId: string) => {
+    return absences.filter(absence => absence.organizationId === organizationId);
   };
   
-  const renderEmployeeRow = (employee: Employee) => {
-    const employeeAbsences = getAbsencesForEmployee(employee.id);
+  const renderOrganizationRow = (organization: Organization) => {
+    const organizationAbsences = getAbsencesForOrganization(organization.id);
     const cells = [];
     let i = 0;
     while (i < daysInPeriod.length) {
       const day = daysInPeriod[i];
-      const absence = employeeAbsences.find(a =>
+      const absence = organizationAbsences.find(a =>
         isWithinInterval(day, { start: a.startDate, end: a.endDate })
       );
 
@@ -130,12 +130,12 @@ export function CalendarGrid({
           onNextMonth={onNextMonth}
         />
         <tbody className="text-sm">
-          {employees.map(employee => (
-            <tr key={employee.id} className="border-t hover:bg-muted/30">
+          {organizations.map(organization => (
+            <tr key={organization.id} className="border-t hover:bg-muted/30">
               <th className="sticky left-0 bg-card hover:bg-muted/30 p-2 font-medium text-left border-r whitespace-nowrap z-10">
-                {employee.name}
+                {organization.name}
               </th>
-              {renderEmployeeRow(employee)}
+              {renderOrganizationRow(organization)}
             </tr>
           ))}
         </tbody>
