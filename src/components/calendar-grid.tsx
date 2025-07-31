@@ -74,7 +74,7 @@ export function CalendarGrid({
           <td
             key={format(day, 'yyyy-MM-dd')}
             colSpan={colSpan}
-            className="p-0.5"
+            className="p-0.5 border-r"
           >
             <TooltipProvider>
               <Tooltip>
