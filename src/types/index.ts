@@ -8,6 +8,8 @@ export type Absence = {
   employeeId: string;
   startDate: Date;
   endDate: Date;
+  absenceType: string;
+  replacement?: string;
 };
 
 export type Holiday = {

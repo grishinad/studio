@@ -6,6 +6,7 @@ import {
   isSameDay,
   isWithinInterval,
 } from 'date-fns';
+import { ru } from 'date-fns/locale';
 
 import { CalendarGridHeaders } from '@/components/calendar-grid-headers';
 import { isWeekend } from '@/lib/dates';
@@ -50,6 +51,10 @@ export function CalendarGrid({
         
         // Ensure we don't exceed array bounds if absence bleeds into next year
         const colSpan = Math.min(duration, daysInYear.length - i);
+        
+        const absenceText = absence.replacement
+          ? `${format(absence.startDate, 'dd.MM.yyyy')} - ${format(absence.endDate, 'dd.MM.yyyy')}, Исполняющий обязанности: ${absence.replacement}`
+          : `${format(absence.startDate, 'dd.MM.yyyy')} - ${format(absence.endDate, 'dd.MM.yyyy')}`;
 
         cells.push(
           <td
@@ -57,9 +62,18 @@ export function CalendarGrid({
             colSpan={colSpan}
             className="p-1 h-14"
           >
-            <div className="bg-primary/80 hover:bg-primary transition-colors duration-200 text-primary-foreground rounded-lg h-full flex items-center justify-center text-xs px-2 shadow">
-              <span className="truncate">Выходной</span>
-            </div>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="bg-primary/80 hover:bg-primary transition-colors duration-200 text-primary-foreground rounded-lg h-full flex items-center justify-center text-xs px-2 shadow cursor-help">
+                    <span className="truncate">{absence.absenceType}</span>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{absenceText}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </td>
         );
         i += colSpan;

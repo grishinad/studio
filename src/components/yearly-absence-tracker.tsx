@@ -40,8 +40,8 @@ const INITIAL_EMPLOYEES: Employee[] = [
 ];
 
 const INITIAL_ABSENCES: Absence[] = [
-    { id: '1', employeeId: '1', startDate: new Date(new Date().getFullYear(), 0, 10), endDate: new Date(new Date().getFullYear(), 0, 14) },
-    { id: '2', employeeId: '2', startDate: new Date(new Date().getFullYear(), 1, 20), endDate: new Date(new Date().getFullYear(), 1, 28) },
+    { id: '1', employeeId: '1', startDate: new Date(new Date().getFullYear(), 0, 10), endDate: new Date(new Date().getFullYear(), 0, 14), absenceType: 'отпуск ежегодный', replacement: 'Сергей Смирнов' },
+    { id: '2', employeeId: '2', startDate: new Date(new Date().getFullYear(), 1, 20), endDate: new Date(new Date().getFullYear(), 1, 28), absenceType: 'больничный' },
 ];
 
 
@@ -65,13 +65,20 @@ export default function YearlyAbsenceTracker() {
     });
   };
 
-  const handleAddAbsence = (employeeId: string, dateRange: DateRange) => {
+  const handleAddAbsence = (
+    employeeId: string,
+    dateRange: DateRange,
+    absenceType: string,
+    replacement?: string
+  ) => {
     if (dateRange.from && dateRange.to) {
       const newAbsence = {
         id: crypto.randomUUID(),
         employeeId,
         startDate: dateRange.from,
         endDate: dateRange.to,
+        absenceType,
+        replacement,
       };
       setAbsences(prev => [...prev, newAbsence]);
       const employee = employees.find(e => e.id === employeeId);
