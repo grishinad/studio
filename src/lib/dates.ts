@@ -7,6 +7,7 @@ import {
   getMonth,
   startOfYear,
 } from 'date-fns';
+import { ru } from 'date-fns/locale';
 
 export const getDaysInYear = (year: number) => {
   const start = startOfYear(new Date(year, 0, 1));
@@ -19,7 +20,7 @@ export const getMonthHeaders = (days: Date[]) => {
   if (!days.length) return months;
 
   let currentMonth = getMonth(days[0]);
-  let monthName = format(days[0], 'MMMM');
+  let monthName = format(days[0], 'LLLL', { locale: ru });
   let dayCount = 0;
 
   days.forEach(day => {
@@ -28,7 +29,7 @@ export const getMonthHeaders = (days: Date[]) => {
     } else {
       months.push({ name: monthName, dayCount });
       currentMonth = getMonth(day);
-      monthName = format(day, 'MMMM');
+      monthName = format(day, 'LLLL', { locale: ru });
       dayCount = 1;
     }
   });
@@ -48,17 +49,17 @@ export const getWeekHeaders = (days: Date[]) => {
     if (week === currentWeek) {
       dayCount++;
     } else {
-      weeks.push({ name: `W${currentWeek}`, dayCount });
+      weeks.push({ name: `Н${currentWeek}`, dayCount });
       currentWeek = week;
       dayCount = 1;
     }
   });
-  weeks.push({ name: `W${currentWeek}`, dayCount });
+  weeks.push({ name: `Н${currentWeek}`, dayCount });
   return weeks;
 };
 
 export const getDayOfWeekCharacter = (day: Date) => {
-  return format(day, 'E').charAt(0);
+  return format(day, 'EEEEEE', { locale: ru });
 };
 
 export const getDayOfMonth = (day: Date) => {

@@ -28,7 +28,7 @@ import { useState } from 'react';
 
 const formSchema = z.object({
   name: z.string().min(2, {
-    message: 'Name must be at least 2 characters.',
+    message: 'Имя должно содержать не менее 2 символов.',
   }),
 });
 
@@ -56,14 +56,14 @@ export function AddEmployeeDialog({ onAddEmployee }: AddEmployeeDialogProps) {
       <DialogTrigger asChild>
         <Button>
           <PlusCircle />
-          Add Employee
+          Добавить сотрудника
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add New Employee</DialogTitle>
+          <DialogTitle>Добавить нового сотрудника</DialogTitle>
           <DialogDescription>
-            Enter the name of the new employee to add them to the tracker.
+            Введите имя нового сотрудника, чтобы добавить его в трекер.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -73,16 +73,16 @@ export function AddEmployeeDialog({ onAddEmployee }: AddEmployeeDialogProps) {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Employee Name</FormLabel>
+                  <FormLabel>Имя сотрудника</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g. Jane Doe" {...field} />
+                    <Input placeholder="например, Иван Иванов" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <DialogFooter>
-              <Button type="submit">Add Employee</Button>
+              <Button type="submit">Добавить сотрудника</Button>
             </DialogFooter>
           </form>
         </Form>

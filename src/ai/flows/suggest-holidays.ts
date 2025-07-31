@@ -41,6 +41,9 @@ const prompt = ai.definePrompt({
   Ensure that the date is in the YYYY-MM-DD format.
   Make sure to include all major holidays.
 
+  The holiday names should be in the language of the country provided.
+  For example, if the country is 'Russia', the holiday names should be in Russian.
+
   Here's the format to use:
   {
     "holidays": [

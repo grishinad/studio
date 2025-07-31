@@ -23,19 +23,20 @@ import type { DateRange } from 'react-day-picker';
 import { Skeleton } from './ui/skeleton';
 
 const COUNTRIES = [
-  'United States',
-  'Canada',
-  'United Kingdom',
-  'Australia',
-  'Germany',
-  'France',
-  'Japan',
+  'США',
+  'Канада',
+  'Великобритания',
+  'Австралия',
+  'Германия',
+  'Франция',
+  'Япония',
+  'Россия'
 ];
 
 const INITIAL_EMPLOYEES: Employee[] = [
-  { id: '1', name: 'Alice Johnson' },
-  { id: '2', name: 'Bob Williams' },
-  { id: '3', name: 'Charlie Brown' },
+  { id: '1', name: 'Анна Иванова' },
+  { id: '2', name: 'Борис Петров' },
+  { id: '3', name: 'Карл Сидоров' },
 ];
 
 const INITIAL_ABSENCES: Absence[] = [
@@ -49,7 +50,7 @@ export default function YearlyAbsenceTracker() {
   const [employees, setEmployees] = useState<Employee[]>(INITIAL_EMPLOYEES);
   const [absences, setAbsences] = useState<Absence[]>(INITIAL_ABSENCES);
   const [holidays, setHolidays] = useState<Holiday[]>([]);
-  const [country, setCountry] = useState(COUNTRIES[0]);
+  const [country, setCountry] = useState(COUNTRIES[7]);
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
 
@@ -59,8 +60,8 @@ export default function YearlyAbsenceTracker() {
     const newEmployee = { id: crypto.randomUUID(), name };
     setEmployees(prev => [...prev, newEmployee]);
     toast({
-      title: 'Employee Added',
-      description: `${name} has been added to the tracker.`,
+      title: 'Сотрудник добавлен',
+      description: `${name} был добавлен в трекер.`,
     });
   };
 
@@ -75,8 +76,8 @@ export default function YearlyAbsenceTracker() {
       setAbsences(prev => [...prev, newAbsence]);
       const employee = employees.find(e => e.id === employeeId);
       toast({
-        title: 'Absence Added',
-        description: `Absence for ${employee?.name} has been recorded.`,
+        title: 'Отсутствие добавлено',
+        description: `Отсутствие для ${employee?.name} было записано.`,
       });
     }
   };
@@ -86,8 +87,8 @@ export default function YearlyAbsenceTracker() {
       const suggestedHolidays = await getHolidaySuggestions(country, year);
       setHolidays(suggestedHolidays);
       toast({
-        title: 'Holidays Suggested',
-        description: `${suggestedHolidays.length} holidays for ${country} in ${year} have been loaded.`,
+        title: 'Праздники предложены',
+        description: `${suggestedHolidays.length} праздников для страны ${country} в ${year} году были загружены.`,
       });
     });
   };
@@ -104,33 +105,33 @@ export default function YearlyAbsenceTracker() {
     <div className="space-y-6">
       <header className="space-y-2">
         <h1 className="text-3xl font-bold tracking-tight text-foreground">
-          Yearly Absence Tracker
+          Годовой трекер отсутствий
         </h1>
         <p className="text-muted-foreground">
-          Plan and visualize employee absences throughout the year.
+          Планируйте и визуализируйте отсутствия сотрудников в течение года.
         </p>
       </header>
 
       <div className="p-4 sm:p-6 bg-card border rounded-lg shadow-sm space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
           <div className="space-y-2">
-            <Label htmlFor="year-input">Year</Label>
+            <Label htmlFor="year-input">Год</Label>
             <Input
               id="year-input"
               type="number"
               value={year}
               onChange={handleYearChange}
               className="max-w-[120px]"
-              placeholder="YYYY"
+              placeholder="ГГГГ"
             />
           </div>
 
           <div className="space-y-2 col-span-1 lg:col-span-2">
-            <Label>AI Holiday Suggestions</Label>
+            <Label>AI предложения по праздникам</Label>
             <div className="flex gap-2">
               <Select value={country} onValueChange={setCountry}>
                 <SelectTrigger className="flex-grow">
-                  <SelectValue placeholder="Select Country" />
+                  <SelectValue placeholder="Выберите страну" />
                 </SelectTrigger>
                 <SelectContent>
                   {COUNTRIES.map(c => (
@@ -142,7 +143,7 @@ export default function YearlyAbsenceTracker() {
               </Select>
               <Button onClick={handleSuggestHolidays} disabled={isPending} variant="outline">
                 <Wand2 className="mr-2 h-4 w-4" />
-                {isPending ? 'Loading...' : 'Suggest'}
+                {isPending ? 'Загрузка...' : 'Предложить'}
               </Button>
             </div>
           </div>

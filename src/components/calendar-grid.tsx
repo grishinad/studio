@@ -58,7 +58,7 @@ export function CalendarGrid({
             className="p-1 h-14"
           >
             <div className="bg-primary/80 hover:bg-primary transition-colors duration-200 text-primary-foreground rounded-lg h-full flex items-center justify-center text-xs px-2 shadow">
-              <span className="truncate">Weekend</span>
+              <span className="truncate">Выходной</span>
             </div>
           </td>
         );

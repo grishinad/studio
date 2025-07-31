@@ -41,17 +41,18 @@ import {
 import { cn } from '@/lib/utils';
 import type { Employee } from '@/types';
 import { useState } from 'react';
+import { ru } from 'date-fns/locale';
 
 const formSchema = z
   .object({
-    employeeId: z.string({ required_error: 'Please select an employee.' }),
+    employeeId: z.string({ required_error: 'Пожалуйста, выберите сотрудника.' }),
     dateRange: z.object({
-      from: z.date({ required_error: 'A start date is required.' }),
-      to: z.date({ required_error: 'An end date is required.' }),
+      from: z.date({ required_error: 'Требуется дата начала.' }),
+      to: z.date({ required_error: 'Требуется дата окончания.' }),
     }),
   })
   .refine(data => data.dateRange.from <= data.dateRange.to, {
-    message: 'End date must be after start date.',
+    message: 'Дата окончания должна быть после даты начала.',
     path: ['dateRange'],
   });
 
@@ -82,14 +83,14 @@ export function AddAbsenceDialog({
       <DialogTrigger asChild>
         <Button variant="secondary">
           <PlusCircle />
-          Add Absence
+          Добавить отсутствие
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add Employee Absence</DialogTitle>
+          <DialogTitle>Добавить отсутствие сотрудника</DialogTitle>
           <DialogDescription>
-            Select an employee and the date range for their absence.
+            Выберите сотрудника и диапазон дат его отсутствия.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -99,14 +100,14 @@ export function AddAbsenceDialog({
               name="employeeId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Employee</FormLabel>
+                  <FormLabel>Сотрудник</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select an employee" />
+                        <SelectValue placeholder="Выберите сотрудника" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -126,7 +127,7 @@ export function AddAbsenceDialog({
               name="dateRange"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
-                  <FormLabel>Absence Dates</FormLabel>
+                  <FormLabel>Даты отсутствия</FormLabel>
                   <Popover>
                     <PopoverTrigger asChild>
                       <FormControl>
@@ -140,14 +141,14 @@ export function AddAbsenceDialog({
                           {field.value?.from ? (
                             field.value.to ? (
                               <>
-                                {format(field.value.from, 'LLL dd, y')} -{' '}
-                                {format(field.value.to, 'LLL dd, y')}
+                                {format(field.value.from, 'LLL dd, y', { locale: ru })} -{' '}
+                                {format(field.value.to, 'LLL dd, y', { locale: ru })}
                               </>
                             ) : (
-                              format(field.value.from, 'LLL dd, y')
+                              format(field.value.from, 'LLL dd, y', { locale: ru })
                             )
                           ) : (
-                            <span>Pick a date range</span>
+                            <span>Выберите диапазон дат</span>
                           )}
                           <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                         </Button>
@@ -159,6 +160,7 @@ export function AddAbsenceDialog({
                         selected={field.value}
                         onSelect={field.onChange}
                         initialFocus
+                        locale={ru}
                       />
                     </PopoverContent>
                   </Popover>
@@ -167,7 +169,7 @@ export function AddAbsenceDialog({
               )}
             />
             <DialogFooter>
-              <Button type="submit">Add Absence</Button>
+              <Button type="submit">Добавить отсутствие</Button>
             </DialogFooter>
           </form>
         </Form>
