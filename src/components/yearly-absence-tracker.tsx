@@ -19,7 +19,11 @@ import { useState, useMemo, useEffect, useCallback } from 'react';
 import type { DateRange } from 'react-day-picker';
 import { fetchDataForMonth, addOrganization, addAbsence } from '@/services/api';
 
-export default function YearlyAbsenceTracker() {
+type YearlyAbsenceTrackerProps = {
+  isPublicView?: boolean;
+};
+
+export default function YearlyAbsenceTracker({ isPublicView = false }: YearlyAbsenceTrackerProps) {
   const [year, setYear] = useState(new Date().getFullYear());
   const [month, setMonth] = useState(new Date().getMonth());
   const [organizations, setOrganizations] = useState<Organization[]>([]);
@@ -172,13 +176,15 @@ export default function YearlyAbsenceTracker() {
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-2">
-              <AddAbsenceDialog
-                organizations={organizations}
-                onAddAbsence={handleAddAbsence}
-              />
-              <AddOrganizationDialog onAddOrganization={handleAddOrganization} />
-            </div>
+            {!isPublicView && (
+              <div className="flex flex-col sm:flex-row gap-2">
+                <AddAbsenceDialog
+                  organizations={organizations}
+                  onAddAbsence={handleAddAbsence}
+                />
+                <AddOrganizationDialog onAddOrganization={handleAddOrganization} />
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -1,9 +1,9 @@
 import YearlyAbsenceTracker from '@/components/yearly-absence-tracker';
 
-export default function Home() {
+export default function PublicPage() {
   return (
     <div className="bg-background min-h-screen">
-      <YearlyAbsenceTracker isPublicView={false} />
+      <YearlyAbsenceTracker isPublicView={true} />
     </div>
   );
 }
