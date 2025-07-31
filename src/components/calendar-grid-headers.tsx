@@ -35,11 +35,11 @@ export function CalendarGridHeaders({
             className="p-1.5 font-semibold text-lg border-b border-r border-border"
           >
             <div className="flex items-center justify-center gap-2">
-              <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onPrevMonth}>
+              <Button variant="outline" size="icon" className="h-7 w-7" onClick={onPrevMonth}>
                 <ChevronLeft className="h-5 w-5" />
               </Button>
               <span>{name} {year}</span>
-              <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onNextMonth}>
+              <Button variant="outline" size="icon" className="h-7 w-7" onClick={onNextMonth}>
                 <ChevronRight className="h-5 w-5" />
               </Button>
             </div>
