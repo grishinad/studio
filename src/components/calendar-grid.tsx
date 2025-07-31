@@ -14,6 +14,7 @@ import { absenceTypeToString, absenceTypeToColorClass } from '@/types';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import { useMemo } from 'react';
 
 type CalendarGridProps = {
   daysInPeriod: Date[];
@@ -30,11 +31,17 @@ export function CalendarGrid({
   onPrevMonth,
   onNextMonth,
 }: CalendarGridProps) {
+  const isMobile = useIsMobile();
+
   const getAbsencesForOrganization = (organizationId: string) => {
     return absences.filter(absence => absence.organizationId === organizationId);
   };
-  
-  const isMobile = useIsMobile();
+
+  const periodInterval = useMemo(() => ({
+      start: daysInPeriod[0],
+      end: daysInPeriod[daysInPeriod.length - 1],
+  }), [daysInPeriod]);
+
 
   const renderOrganizationRow = (organization: Organization) => {
     const organizationAbsences = getAbsencesForOrganization(organization.id);
@@ -47,8 +54,16 @@ export function CalendarGrid({
       );
 
       if (absence) {
-        const intervalStart = isWithinInterval(absence.startDate, { start: daysInPeriod[0], end: daysInPeriod[daysInPeriod.length - 1]}) ? absence.startDate : daysInPeriod[0];
-        const intervalEnd = isWithinInterval(absence.endDate, { start: daysInPeriod[0], end: daysInPeriod[daysInPeriod.length - 1]}) ? absence.endDate : daysInPeriod[daysInPeriod.length-1];
+        const absenceInterval = { start: absence.startDate, end: absence.endDate };
+        
+        // Check if absence interval overlaps with the current month's period
+        if (absenceInterval.start > periodInterval.end || absenceInterval.end < periodInterval.start) {
+            i++;
+            continue;
+        }
+
+        const intervalStart = absence.startDate > periodInterval.start ? absence.startDate : periodInterval.start;
+        const intervalEnd = absence.endDate < periodInterval.end ? absence.endDate : periodInterval.end;
         
         let duration = differenceInCalendarDays(intervalEnd, day) + 1;
         
