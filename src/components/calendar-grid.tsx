@@ -78,7 +78,7 @@ export function CalendarGrid({
           <td
             key={format(day, 'yyyy-MM-dd')}
             colSpan={colSpan}
-            className="p-1 h-14"
+            className="p-1 h-7"
           >
             <TooltipProvider>
               <Tooltip>
@@ -104,7 +104,7 @@ export function CalendarGrid({
           <td
             key={format(day, 'yyyy-MM-dd')}
             className={cn(
-              'h-14 w-10 border-r',
+              'h-7 w-10 border-r',
               isWeekend(day) && 'bg-muted/50',
             )}
           />
