@@ -17,6 +17,8 @@ import { getDaysInMonthForYear, MONTHS } from '@/lib/dates';
 import type { Absence, Employee } from '@/types';
 import { useState, useMemo } from 'react';
 import type { DateRange } from 'react-day-picker';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { Button } from './ui/button';
 
 const INITIAL_EMPLOYEES: Employee[] = [
   { id: '1', name: 'Анна Иванова' },
@@ -75,8 +77,8 @@ export default function YearlyAbsenceTracker() {
   const handleYearChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     if (value === '') {
-      setYear(0);
-      return;
+        setYear(new Date().getFullYear());
+        return;
     }
     const newYear = parseInt(value, 10);
     if (!isNaN(newYear) && newYear > 0) {
@@ -87,6 +89,24 @@ export default function YearlyAbsenceTracker() {
   const handleMonthChange = (value: string) => {
     setMonth(parseInt(value, 10));
   }
+  
+  const handlePrevMonth = () => {
+    if (month === 0) {
+      setMonth(11);
+      setYear(prev => prev - 1);
+    } else {
+      setMonth(prev => prev - 1);
+    }
+  };
+
+  const handleNextMonth = () => {
+    if (month === 11) {
+      setMonth(0);
+      setYear(prev => prev + 1);
+    } else {
+      setMonth(prev => prev + 1);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -109,24 +129,32 @@ export default function YearlyAbsenceTracker() {
                 type="number"
                 value={year === 0 ? '' : year}
                 onChange={handleYearChange}
-                className="w-[120px]"
+                className="w-[120px] min-w-[120px]"
                 placeholder="ГГГГ"
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="month-select">Месяц</Label>
-               <Select value={String(month)} onValueChange={handleMonthChange}>
-                <SelectTrigger id="month-select" className="w-[180px]">
-                  <SelectValue placeholder="Выберите месяц" />
-                </SelectTrigger>
-                <SelectContent>
-                  {MONTHS.map((name, index) => (
-                    <SelectItem key={index} value={String(index)}>
-                      {name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div className="flex items-end gap-2">
+              <Button variant="outline" size="icon" onClick={handlePrevMonth}>
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <div className="space-y-2">
+                <Label htmlFor="month-select">Месяц</Label>
+                <Select value={String(month)} onValueChange={handleMonthChange}>
+                  <SelectTrigger id="month-select" className="w-[180px]">
+                    <SelectValue placeholder="Выберите месяц" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {MONTHS.map((name, index) => (
+                      <SelectItem key={index} value={String(index)}>
+                        {name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+               <Button variant="outline" size="icon" onClick={handleNextMonth}>
+                <ChevronRight className="h-4 w-4" />
+              </Button>
             </div>
           </div>
 
