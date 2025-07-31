@@ -51,9 +51,9 @@ export default function YearlyAbsenceTracker() {
     loadData(year, month);
   }, [year, month, loadData]);
 
-  const handleAddOrganization = async (name: string) => {
+  const handleAddOrganization = async (name: string, chief?: string) => {
     try {
-      const newOrganization = await addOrganization(name);
+      const newOrganization = await addOrganization(name, chief);
       setOrganizations(prev => [...prev, newOrganization]);
       toast({
         title: 'Организация добавлена',

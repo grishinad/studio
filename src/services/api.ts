@@ -77,13 +77,13 @@ export const fetchDataForMonth = async (year: number, month: number): Promise<{ 
   return { organizations, absences };
 };
 
-export const addOrganization = async (name: string): Promise<Organization> => {
-  console.log(`Submitting new organization: ${name}`);
+export const addOrganization = async (name: string, chief?: string): Promise<Organization> => {
+  console.log(`Submitting new organization: ${name}`, { chief });
   // In a real app, you would make a POST request to your backend
   // const response = await fetch('https://your-api.com/organizations', {
   //   method: 'POST',
   //   headers: { 'Content-Type': 'application/json' },
-  //   body: JSON.stringify({ organization: name, chief: 'Не назначен' }),
+  //   body: JSON.stringify({ organization: name, chief }),
   // });
   // const newOrganization = await response.json();
   // return newOrganization;
@@ -92,7 +92,7 @@ export const addOrganization = async (name: string): Promise<Organization> => {
   const newOrganization: Organization = {
     id: crypto.randomUUID(),
     name,
-    chief: 'Не назначен',
+    chief: chief || 'Не назначен',
   };
   return Promise.resolve(newOrganization);
 };

@@ -30,10 +30,11 @@ const formSchema = z.object({
   name: z.string().min(2, {
     message: 'Название должно содержать не менее 2 символов.',
   }),
+  chief: z.string().optional(),
 });
 
 type AddOrganizationDialogProps = {
-  onAddOrganization: (name: string) => Promise<void>;
+  onAddOrganization: (name: string, chief?: string) => Promise<void>;
 };
 
 export function AddOrganizationDialog({ onAddOrganization }: AddOrganizationDialogProps) {
@@ -42,11 +43,12 @@ export function AddOrganizationDialog({ onAddOrganization }: AddOrganizationDial
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
+      chief: '',
     },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    await onAddOrganization(values.name);
+    await onAddOrganization(values.name, values.chief);
     form.reset();
     setIsOpen(false);
   }
@@ -76,6 +78,19 @@ export function AddOrganizationDialog({ onAddOrganization }: AddOrganizationDial
                   <FormLabel>Название организации</FormLabel>
                   <FormControl>
                     <Input placeholder="например, ООО 'Ромашка'" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+             <FormField
+              control={form.control}
+              name="chief"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Руководитель</FormLabel>
+                  <FormControl>
+                    <Input placeholder="например, Иванов И.И." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
