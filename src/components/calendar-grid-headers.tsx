@@ -32,15 +32,15 @@ export function CalendarGridHeaders({
           <th
             key={name}
             colSpan={dayCount}
-            className="p-1.5 font-semibold text-lg border-b border-r border-border relative z-20"
+            className="p-1.5 font-semibold text-base sm:text-lg border-b border-r border-border relative z-20"
           >
-            <div className="flex items-center justify-center gap-2">
-              <Button variant="outline" size="icon" className="h-7 w-7" onClick={onPrevMonth}>
-                <ChevronLeft className="h-5 w-5" />
+            <div className="flex items-center justify-center gap-1 sm:gap-2">
+              <Button variant="outline" size="icon" className="h-6 w-6 sm:h-7 sm:w-7" onClick={onPrevMonth}>
+                <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5" />
               </Button>
-              <span>{name} {year}</span>
-              <Button variant="outline" size="icon" className="h-7 w-7" onClick={onNextMonth}>
-                <ChevronRight className="h-5 w-5" />
+              <span className="whitespace-nowrap">{name} {year}</span>
+              <Button variant="outline" size="icon" className="h-6 w-6 sm:h-7 sm:w-7" onClick={onNextMonth}>
+                <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5" />
               </Button>
             </div>
           </th>

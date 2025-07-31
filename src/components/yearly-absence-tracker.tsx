@@ -138,8 +138,8 @@ export default function YearlyAbsenceTracker() {
       </header>
 
       <div className="p-4 sm:p-6 bg-card border rounded-lg shadow-sm space-y-6">
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <div className="flex flex-wrap items-end gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-end gap-4">
             <div className="space-y-2">
               <Label htmlFor="year-input">Год</Label>
               <Input
@@ -147,30 +147,28 @@ export default function YearlyAbsenceTracker() {
                 type="number"
                 value={year === 0 ? '' : year}
                 onChange={handleYearChange}
-                className="w-[120px] min-w-[120px]"
+                className="w-full sm:w-[120px]"
                 placeholder="ГГГГ"
               />
             </div>
-            <div className="flex items-end gap-2">
-              <div className="space-y-2">
-                <Label htmlFor="month-select">Месяц</Label>
-                <Select value={String(month)} onValueChange={handleMonthChange}>
-                  <SelectTrigger id="month-select" className="w-[180px]">
-                    <SelectValue placeholder="Выберите месяц" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {MONTHS.map((name, index) => (
-                      <SelectItem key={index} value={String(index)}>
-                        {name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="month-select">Месяц</Label>
+              <Select value={String(month)} onValueChange={handleMonthChange}>
+                <SelectTrigger id="month-select" className="w-full sm:w-[180px]">
+                  <SelectValue placeholder="Выберите месяц" />
+                </SelectTrigger>
+                <SelectContent>
+                  {MONTHS.map((name, index) => (
+                    <SelectItem key={index} value={String(index)}>
+                      {name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
              <AddAbsenceDialog
               organizations={organizations}
               onAddAbsence={handleAddAbsence}
