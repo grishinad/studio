@@ -5,7 +5,7 @@ import { Absence, AbsenceType, Organization } from "@/types";
 type BackendAbsence = {
   from: number; // timestamp
   to: number; // timestamp
-  type: AbsenceType;
+  type: number; // Now a number
   deputy?: string;
 };
 
@@ -33,14 +33,14 @@ export const fetchDataForMonth = async (year: number, month: number): Promise<{ 
         organization: 'ООО "Ромашка"',
         chief: 'Иванов Иван Иванович',
         absences: [
-          { from: new Date(year, month, 10).getTime(), to: new Date(year, month, 14).getTime(), type: AbsenceType.ANNUAL_LEAVE, deputy: 'Сергей Смирнов' },
+          { from: new Date(year, month, 10).getTime(), to: new Date(year, month, 14).getTime(), type: 0, deputy: 'Сергей Смирнов' }, // AbsenceType.ANNUAL_LEAVE
         ]
       },
       {
         organization: 'ИП Петров',
         chief: 'Петров Петр Петрович',
         absences: [
-            { from: new Date(year, month, 20).getTime(), to: new Date(year, month, 28).getTime(), type: AbsenceType.SICK_LEAVE },
+            { from: new Date(year, month, 20).getTime(), to: new Date(year, month, 28).getTime(), type: 2 }, // AbsenceType.SICK_LEAVE
         ]
       },
       {
@@ -68,7 +68,7 @@ export const fetchDataForMonth = async (year: number, month: number): Promise<{ 
         organizationId: orgId,
         startDate: new Date(backendAbsence.from),
         endDate: new Date(backendAbsence.to),
-        absenceType: backendAbsence.type,
+        absenceType: backendAbsence.type as AbsenceType,
         replacement: backendAbsence.deputy,
       });
     });
