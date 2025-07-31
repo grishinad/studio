@@ -28,23 +28,21 @@ export function CalendarGridHeaders({
         <th rowSpan={2} className="sticky left-0 bg-background/95 p-2 font-semibold text-sm border-b border-r border-border align-middle z-30">
           Сотрудник
         </th>
-        {monthHeaders.map(({ name, dayCount, year }, index) => (
+        {monthHeaders.map(({ name, dayCount, year }) => (
           <th
             key={name}
             colSpan={dayCount}
-            className="p-1.5 font-semibold text-lg border-b border-r border-border relative"
+            className="p-1.5 font-semibold text-lg border-b border-r border-border"
           >
-             {index === 0 && (
-              <Button variant="ghost" size="icon" className="absolute left-2 top-1/2 -translate-y-1/2 h-7 w-7" onClick={onPrevMonth}>
+            <div className="flex items-center justify-center gap-2">
+              <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onPrevMonth}>
                 <ChevronLeft className="h-5 w-5" />
               </Button>
-            )}
-            {name} {year}
-            {index === monthHeaders.length - 1 && (
-               <Button variant="ghost" size="icon" className="absolute right-2 top-1/2 -translate-y-1/2 h-7 w-7" onClick={onNextMonth}>
+              <span>{name} {year}</span>
+              <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onNextMonth}>
                 <ChevronRight className="h-5 w-5" />
               </Button>
-            )}
+            </div>
           </th>
         ))}
       </tr>
