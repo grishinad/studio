@@ -5,6 +5,7 @@ import {
   format,
   getISODay,
   getMonth,
+  getYear,
   startOfMonth,
   startOfYear,
 } from 'date-fns';
@@ -28,24 +29,26 @@ export const getDaysInMonthForYear = (year: number, month: number) => {
 };
 
 export const getMonthHeaders = (days: Date[]) => {
-  const months: { name: string; dayCount: number }[] = [];
+  const months: { name: string; dayCount: number; year: number }[] = [];
   if (!days.length) return months;
 
   let currentMonth = getMonth(days[0]);
   let monthName = format(days[0], 'LLLL', { locale: ru });
+  let currentYear = getYear(days[0]);
   let dayCount = 0;
 
   days.forEach(day => {
     if (getMonth(day) === currentMonth) {
       dayCount++;
     } else {
-      months.push({ name: monthName, dayCount });
+      months.push({ name: monthName, dayCount, year: currentYear });
       currentMonth = getMonth(day);
       monthName = format(day, 'LLLL', { locale: ru });
+      currentYear = getYear(day);
       dayCount = 1;
     }
   });
-  months.push({ name: monthName, dayCount });
+  months.push({ name: monthName, dayCount, year: currentYear });
   return months;
 };
 

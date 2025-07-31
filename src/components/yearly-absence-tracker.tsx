@@ -17,8 +17,6 @@ import { getDaysInMonthForYear, MONTHS } from '@/lib/dates';
 import type { Absence, Employee } from '@/types';
 import { useState, useMemo } from 'react';
 import type { DateRange } from 'react-day-picker';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { Button } from './ui/button';
 
 const INITIAL_EMPLOYEES: Employee[] = [
   { id: '1', name: 'Анна Иванова' },
@@ -134,9 +132,6 @@ export default function YearlyAbsenceTracker() {
               />
             </div>
             <div className="flex items-end gap-2">
-              <Button variant="outline" size="icon" onClick={handlePrevMonth}>
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
               <div className="space-y-2">
                 <Label htmlFor="month-select">Месяц</Label>
                 <Select value={String(month)} onValueChange={handleMonthChange}>
@@ -152,9 +147,6 @@ export default function YearlyAbsenceTracker() {
                   </SelectContent>
                 </Select>
               </div>
-               <Button variant="outline" size="icon" onClick={handleNextMonth}>
-                <ChevronRight className="h-4 w-4" />
-              </Button>
             </div>
           </div>
 
@@ -172,6 +164,8 @@ export default function YearlyAbsenceTracker() {
         daysInPeriod={daysInMonth}
         employees={employees}
         absences={absences}
+        onPrevMonth={handlePrevMonth}
+        onNextMonth={handleNextMonth}
       />
     </div>
   );

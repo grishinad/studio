@@ -18,12 +18,16 @@ type CalendarGridProps = {
   daysInPeriod: Date[];
   employees: Employee[];
   absences: Absence[];
+  onPrevMonth: () => void;
+  onNextMonth: () => void;
 };
 
 export function CalendarGrid({
   daysInPeriod,
   employees,
   absences,
+  onPrevMonth,
+  onNextMonth,
 }: CalendarGridProps) {
   const getAbsencesForEmployee = (employeeId: string) => {
     return absences.filter(absence => absence.employeeId === employeeId);
@@ -99,7 +103,11 @@ export function CalendarGrid({
             <col key={i} style={{ width: '2.5rem' }} />
           ))}
         </colgroup>
-        <CalendarGridHeaders daysInPeriod={daysInPeriod} />
+        <CalendarGridHeaders
+          daysInPeriod={daysInPeriod}
+          onPrevMonth={onPrevMonth}
+          onNextMonth={onNextMonth}
+        />
         <tbody className="text-sm">
           {employees.map(employee => (
             <tr key={employee.id} className="border-t hover:bg-muted/30">

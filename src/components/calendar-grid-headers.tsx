@@ -5,13 +5,19 @@ import {
   getDayOfWeekCharacter,
   getMonthHeaders,
 } from '@/lib/dates';
+import { Button } from './ui/button';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 type CalendarGridHeadersProps = {
   daysInPeriod: Date[];
+  onPrevMonth: () => void;
+  onNextMonth: () => void;
 };
 
 export function CalendarGridHeaders({
   daysInPeriod,
+  onPrevMonth,
+  onNextMonth,
 }: CalendarGridHeadersProps) {
   const monthHeaders = getMonthHeaders(daysInPeriod);
 
@@ -22,13 +28,23 @@ export function CalendarGridHeaders({
         <th rowSpan={2} className="sticky left-0 bg-background/95 p-2 font-semibold text-sm border-b border-r border-border align-middle z-30">
           Сотрудник
         </th>
-        {monthHeaders.map(({ name, dayCount }) => (
+        {monthHeaders.map(({ name, dayCount, year }, index) => (
           <th
             key={name}
             colSpan={dayCount}
-            className="p-1.5 font-semibold text-lg border-b border-r border-border"
+            className="p-1.5 font-semibold text-lg border-b border-r border-border relative"
           >
-            {name}
+             {index === 0 && (
+              <Button variant="ghost" size="icon" className="absolute left-2 top-1/2 -translate-y-1/2 h-7 w-7" onClick={onPrevMonth}>
+                <ChevronLeft className="h-5 w-5" />
+              </Button>
+            )}
+            {name} {year}
+            {index === monthHeaders.length - 1 && (
+               <Button variant="ghost" size="icon" className="absolute right-2 top-1/2 -translate-y-1/2 h-7 w-7" onClick={onNextMonth}>
+                <ChevronRight className="h-5 w-5" />
+              </Button>
+            )}
           </th>
         ))}
       </tr>
