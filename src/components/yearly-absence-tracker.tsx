@@ -100,8 +100,8 @@ export default function YearlyAbsenceTracker() {
       </header>
 
       <div className="p-4 sm:p-6 bg-card border rounded-lg shadow-sm space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
-          <div className="flex gap-4">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div className="flex flex-wrap items-end gap-4">
             <div className="space-y-2">
               <Label htmlFor="year-input">Год</Label>
               <Input
@@ -109,7 +109,7 @@ export default function YearlyAbsenceTracker() {
                 type="number"
                 value={year === 0 ? '' : year}
                 onChange={handleYearChange}
-                className="max-w-[120px]"
+                className="w-[120px]"
                 placeholder="ГГГГ"
               />
             </div>
@@ -130,7 +130,7 @@ export default function YearlyAbsenceTracker() {
             </div>
           </div>
 
-          <div className="flex gap-2 justify-self-start md:justify-self-end col-start-auto lg:col-start-4">
+          <div className="flex gap-2">
              <AddAbsenceDialog
               employees={employees}
               onAddAbsence={handleAddAbsence}
