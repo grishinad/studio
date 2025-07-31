@@ -22,7 +22,7 @@ type ApiResponse = {
 export const fetchDataForMonth = async (year: number, month: number): Promise<{ organizations: Organization[], absences: Absence[] }> => {
   // Mocking the API response as the backend is not implemented.
   // In a real scenario, you would fetch from an actual API endpoint.
-  // const response = await fetch(`${API_BASE_URL}/data?year=${year}&month=${month}`);
+  // const response = await fetch(`https://your-api.com/data?year=${year}&month=${month}`);
   // const data: ApiResponse = await response.json();
   
   console.log(`Fetching data for ${year}-${month + 1}`);
@@ -75,4 +75,63 @@ export const fetchDataForMonth = async (year: number, month: number): Promise<{ 
   });
 
   return { organizations, absences };
+};
+
+export const addOrganization = async (name: string): Promise<Organization> => {
+  console.log(`Submitting new organization: ${name}`);
+  // In a real app, you would make a POST request to your backend
+  // const response = await fetch('https://your-api.com/organizations', {
+  //   method: 'POST',
+  //   headers: { 'Content-Type': 'application/json' },
+  //   body: JSON.stringify({ organization: name, chief: 'Не назначен' }),
+  // });
+  // const newOrganization = await response.json();
+  // return newOrganization;
+
+  // Mocking the API response
+  const newOrganization: Organization = {
+    id: crypto.randomUUID(),
+    name,
+    chief: 'Не назначен',
+  };
+  return Promise.resolve(newOrganization);
+};
+
+export const addAbsence = async (
+  organizationId: string,
+  dateRange: { from: Date; to: Date },
+  absenceType: string,
+  replacement?: string
+): Promise<Absence> => {
+  console.log('Submitting new absence:', {
+    organizationId,
+    ...dateRange,
+    absenceType,
+    replacement,
+  });
+  // In a real app, you would make a POST request to your backend
+  // const response = await fetch('https://your-api.com/absences', {
+  //   method: 'POST',
+  //   headers: { 'Content-Type': 'application/json' },
+  //   body: JSON.stringify({ 
+  //      organizationId,
+  //      from: dateRange.from.getTime(),
+  //      to: dateRange.to.getTime(),
+  //      type: absenceType,
+  //      deputy: replacement
+  //   }),
+  // });
+  // const newAbsence = await response.json();
+  // return newAbsence;
+
+  // Mocking the API response
+  const newAbsence: Absence = {
+    id: crypto.randomUUID(),
+    organizationId,
+    startDate: dateRange.from,
+    endDate: dateRange.to,
+    absenceType,
+    replacement,
+  };
+  return Promise.resolve(newAbsence);
 };

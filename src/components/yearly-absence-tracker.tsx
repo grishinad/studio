@@ -17,7 +17,7 @@ import { getDaysInMonthForYear, MONTHS } from '@/lib/dates';
 import type { Absence, Organization } from '@/types';
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import type { DateRange } from 'react-day-picker';
-import { fetchDataForMonth } from '@/services/api';
+import { fetchDataForMonth, addOrganization, addAbsence } from '@/services/api';
 
 export default function YearlyAbsenceTracker() {
   const [year, setYear] = useState(new Date().getFullYear());
@@ -51,36 +51,47 @@ export default function YearlyAbsenceTracker() {
     loadData(year, month);
   }, [year, month, loadData]);
 
-  const handleAddOrganization = (name: string) => {
-    const newOrganization = { id: crypto.randomUUID(), name, chief: 'Не назначен' };
-    setOrganizations(prev => [...prev, newOrganization]);
-    toast({
-      title: 'Организация добавлена',
-      description: `${name} была добавлена в трекер.`,
-    });
+  const handleAddOrganization = async (name: string) => {
+    try {
+      const newOrganization = await addOrganization(name);
+      setOrganizations(prev => [...prev, newOrganization]);
+      toast({
+        title: 'Организация добавлена',
+        description: `${name} была добавлена в трекер.`,
+      });
+    } catch (error) {
+       console.error("Failed to add organization", error);
+       toast({
+        title: 'Ошибка',
+        description: 'Не удалось добавить организацию.',
+        variant: 'destructive',
+      });
+    }
   };
 
-  const handleAddAbsence = (
+  const handleAddAbsence = async (
     organizationId: string,
     dateRange: DateRange,
     absenceType: string,
     replacement?: string
   ) => {
     if (dateRange.from && dateRange.to) {
-      const newAbsence = {
-        id: crypto.randomUUID(),
-        organizationId,
-        startDate: dateRange.from,
-        endDate: dateRange.to,
-        absenceType,
-        replacement,
-      };
-      setAbsences(prev => [...prev, newAbsence]);
-      const organization = organizations.find(e => e.id === organizationId);
-      toast({
-        title: 'Отсутствие добавлено',
-        description: `Отсутствие для ${organization?.name} было записано.`,
-      });
+      try {
+        const newAbsence = await addAbsence(organizationId, {from: dateRange.from, to: dateRange.to}, absenceType, replacement);
+        setAbsences(prev => [...prev, newAbsence]);
+        const organization = organizations.find(e => e.id === organizationId);
+        toast({
+          title: 'Отсутствие добавлено',
+          description: `Отсутствие для ${organization?.name} было записано.`,
+        });
+      } catch (error) {
+        console.error("Failed to add absence", error);
+        toast({
+          title: 'Ошибка',
+          description: 'Не удалось добавить отсутствие.',
+          variant: 'destructive',
+        });
+      }
     }
   };
 

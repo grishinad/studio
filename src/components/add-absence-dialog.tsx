@@ -66,7 +66,7 @@ type AddAbsenceDialogProps = {
     dateRange: DateRange,
     absenceType: string,
     replacement?: string
-  ) => void;
+  ) => Promise<void>;
 };
 
 export function AddAbsenceDialog({
@@ -78,9 +78,9 @@ export function AddAbsenceDialog({
     resolver: zodResolver(formSchema),
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     if (values.dateRange.from && values.dateRange.to) {
-      onAddAbsence(values.organizationId, values.dateRange, values.absenceType, values.replacement);
+      await onAddAbsence(values.organizationId, values.dateRange, values.absenceType, values.replacement);
       form.reset();
       setIsOpen(false);
     }

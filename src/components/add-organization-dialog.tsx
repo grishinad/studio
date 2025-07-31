@@ -33,7 +33,7 @@ const formSchema = z.object({
 });
 
 type AddOrganizationDialogProps = {
-  onAddOrganization: (name: string) => void;
+  onAddOrganization: (name: string) => Promise<void>;
 };
 
 export function AddOrganizationDialog({ onAddOrganization }: AddOrganizationDialogProps) {
@@ -45,8 +45,8 @@ export function AddOrganizationDialog({ onAddOrganization }: AddOrganizationDial
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    onAddOrganization(values.name);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    await onAddOrganization(values.name);
     form.reset();
     setIsOpen(false);
   }
