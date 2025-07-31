@@ -92,6 +92,14 @@ export default function YearlyAbsenceTracker() {
 
   const handleSuggestHolidays = () => {
     startTransition(async () => {
+      if (year === 0) {
+        toast({
+            title: 'Неверный год',
+            description: 'Пожалуйста, введите действительный год.',
+            variant: 'destructive',
+        });
+        return;
+      }
       const suggestedHolidays = await getHolidaySuggestions(country, year);
       setHolidays(suggestedHolidays);
       toast({
@@ -102,14 +110,17 @@ export default function YearlyAbsenceTracker() {
   };
 
   const handleYearChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newYear = parseInt(e.target.value, 10);
-    if (!isNaN(newYear) && newYear > 0) {
-      setYear(newYear);
-      if (String(newYear).length === 4) {
-        setHolidays([]); // Clear holidays when year changes
-      }
-    } else if (e.target.value === '') {
-       setYear(0); // Or some other indicator of empty
+    const value = e.target.value;
+    if (value === '') {
+      setYear(0); // Use 0 or another sentinel for empty
+      return;
+    }
+    const newYear = parseInt(value, 10);
+    if (!isNaN(newYear) && newYear >= 0) { // Allow 0 but treat it as empty
+        setYear(newYear);
+        if (String(newYear).length === 4) {
+            setHolidays([]); // Clear holidays when a valid 4-digit year is entered
+        }
     }
   };
 
@@ -136,7 +147,7 @@ export default function YearlyAbsenceTracker() {
               <Input
                 id="year-input"
                 type="number"
-                value={year > 0 ? year : ''}
+                value={year === 0 ? '' : year}
                 onChange={handleYearChange}
                 className="max-w-[120px]"
                 placeholder="ГГГГ"
