@@ -37,10 +37,15 @@ export function CalendarGrid({
     return absences.filter(absence => absence.organizationId === organizationId);
   };
 
-  const periodInterval = useMemo(() => ({
-      start: daysInPeriod[0],
-      end: daysInPeriod[daysInPeriod.length - 1],
-  }), [daysInPeriod]);
+  const periodInterval = useMemo(() => {
+      if (!daysInPeriod || daysInPeriod.length === 0) {
+        return { start: new Date(), end: new Date() };
+      }
+      return {
+        start: daysInPeriod[0],
+        end: daysInPeriod[daysInPeriod.length - 1],
+      }
+  }, [daysInPeriod]);
 
 
   const renderOrganizationRow = (organization: Organization) => {
@@ -56,16 +61,13 @@ export function CalendarGrid({
       if (absence) {
         const absenceInterval = { start: absence.startDate, end: absence.endDate };
         
-        // Check if absence interval overlaps with the current month's period
         if (absenceInterval.start > periodInterval.end || absenceInterval.end < periodInterval.start) {
             i++;
             continue;
         }
 
         const intervalStart = absence.startDate > periodInterval.start ? absence.startDate : periodInterval.start;
-        const intervalEnd = absence.endDate < periodInterval.end ? absence.endDate : periodInterval.end;
-        
-        let duration = differenceInCalendarDays(intervalEnd, day) + 1;
+        let duration = differenceInCalendarDays(absence.endDate, day) + 1;
         
         const colSpan = Math.min(duration, daysInPeriod.length - i);
         const absenceTypeName = absenceTypeToString(absence.absenceType);
@@ -113,7 +115,7 @@ export function CalendarGrid({
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                     <AbsenceInfo isTooltip />
+                     <AbsenceInfo isTooltip={true} />
                   </TooltipTrigger>
                   <TooltipContent>
                     <AbsenceDetails />

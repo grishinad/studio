@@ -77,13 +77,14 @@ export default function YearlyAbsenceTracker() {
   ) => {
     if (dateRange.from && dateRange.to) {
       try {
-        const newAbsence = await addAbsence(organizationId, {from: dateRange.from, to: dateRange.to}, absenceType, replacement);
-        setAbsences(prev => [...prev, newAbsence]);
+        await addAbsence(organizationId, {from: dateRange.from, to: dateRange.to}, absenceType, replacement);
         const organization = organizations.find(e => e.id === organizationId);
         toast({
           title: 'Отсутствие добавлено',
           description: `Отсутствие для ${organization?.name} было записано.`,
         });
+        // Reload data for the current month to reflect changes
+        await loadData(year, month);
       } catch (error) {
         console.error("Failed to add absence", error);
         toast({
