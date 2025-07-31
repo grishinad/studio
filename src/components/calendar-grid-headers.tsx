@@ -5,7 +5,6 @@ import {
   getDayOfWeekCharacter,
   getMonthHeaders,
 } from '@/lib/dates';
-import { cn } from '@/lib/utils';
 
 type CalendarGridHeadersProps = {
   daysInPeriod: Date[];
