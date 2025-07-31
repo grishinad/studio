@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { getDaysInYear } from '@/lib/dates';
+import { getDaysInMonthForYear, MONTHS } from '@/lib/dates';
 import type { Absence, Employee, Holiday } from '@/types';
 import { Wand2 } from 'lucide-react';
 import { useState, useTransition, useMemo } from 'react';
@@ -47,6 +47,7 @@ const INITIAL_ABSENCES: Absence[] = [
 
 export default function YearlyAbsenceTracker() {
   const [year, setYear] = useState(new Date().getFullYear());
+  const [month, setMonth] = useState(new Date().getMonth());
   const [employees, setEmployees] = useState<Employee[]>(INITIAL_EMPLOYEES);
   const [absences, setAbsences] = useState<Absence[]>(INITIAL_ABSENCES);
   const [holidays, setHolidays] = useState<Holiday[]>([]);
@@ -54,7 +55,7 @@ export default function YearlyAbsenceTracker() {
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
 
-  const daysInYear = useMemo(() => getDaysInYear(year), [year]);
+  const daysInMonth = useMemo(() => getDaysInMonthForYear(year, month), [year, month]);
 
   const handleAddEmployee = (name: string) => {
     const newEmployee = { id: crypto.randomUUID(), name };
@@ -102,17 +103,25 @@ export default function YearlyAbsenceTracker() {
 
   const handleYearChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newYear = parseInt(e.target.value, 10);
-    if (!isNaN(newYear) && String(newYear).length === 4) {
-      setYear(newYear);
-      setHolidays([]); // Clear holidays when year changes
+    if (!isNaN(newYear) && String(newYear).length <= 4) {
+        if (String(newYear).length === 4) {
+            setYear(newYear);
+            setHolidays([]); // Clear holidays when year changes
+        }
+    } else if (e.target.value === '') {
+        // Allow clearing the input
     }
   };
+
+  const handleMonthChange = (value: string) => {
+    setMonth(parseInt(value, 10));
+  }
 
   return (
     <div className="space-y-6">
       <header className="space-y-2">
         <h1 className="text-3xl font-bold tracking-tight text-foreground">
-          Годовой трекер отсутствий
+          Трекер отсутствий
         </h1>
         <p className="text-muted-foreground">
           Планируйте и визуализируйте отсутствия сотрудников в течение года.
@@ -121,16 +130,33 @@ export default function YearlyAbsenceTracker() {
 
       <div className="p-4 sm:p-6 bg-card border rounded-lg shadow-sm space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
-          <div className="space-y-2">
-            <Label htmlFor="year-input">Год</Label>
-            <Input
-              id="year-input"
-              type="number"
-              value={year}
-              onChange={handleYearChange}
-              className="max-w-[120px]"
-              placeholder="ГГГГ"
-            />
+          <div className="flex gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="year-input">Год</Label>
+              <Input
+                id="year-input"
+                type="number"
+                defaultValue={year}
+                onChange={handleYearChange}
+                className="max-w-[120px]"
+                placeholder="ГГГГ"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="month-select">Месяц</Label>
+               <Select value={String(month)} onValueChange={handleMonthChange}>
+                <SelectTrigger id="month-select" className="w-[180px]">
+                  <SelectValue placeholder="Выберите месяц" />
+                </SelectTrigger>
+                <SelectContent>
+                  {MONTHS.map((name, index) => (
+                    <SelectItem key={index} value={String(index)}>
+                      {name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           <div className="space-y-2 col-span-1 lg:col-span-2">
@@ -172,8 +198,7 @@ export default function YearlyAbsenceTracker() {
          </div>
       ) : (
         <CalendarGrid
-          year={year}
-          daysInYear={daysInYear}
+          daysInPeriod={daysInMonth}
           employees={employees}
           absences={absences}
           holidays={holidays}

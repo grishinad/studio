@@ -15,16 +15,14 @@ import type { Absence, Employee, Holiday } from '@/types';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 
 type CalendarGridProps = {
-  year: number;
-  daysInYear: Date[];
+  daysInPeriod: Date[];
   employees: Employee[];
   absences: Absence[];
   holidays: Holiday[];
 };
 
 export function CalendarGrid({
-  year,
-  daysInYear,
+  daysInPeriod,
   employees,
   absences,
   holidays,
@@ -39,18 +37,21 @@ export function CalendarGrid({
     const employeeAbsences = getAbsencesForEmployee(employee.id);
     const cells = [];
     let i = 0;
-    while (i < daysInYear.length) {
-      const day = daysInYear[i];
+    while (i < daysInPeriod.length) {
+      const day = daysInPeriod[i];
       const absence = employeeAbsences.find(a =>
         isWithinInterval(day, { start: a.startDate, end: a.endDate })
       );
 
       if (absence) {
-        const duration =
-          differenceInCalendarDays(absence.endDate, absence.startDate) + 1;
+        // Calculate duration only within the current view
+        const intervalStart = isWithinInterval(absence.startDate, { start: daysInPeriod[0], end: daysInPeriod[daysInPeriod.length - 1]}) ? absence.startDate : daysInPeriod[0];
+        const intervalEnd = isWithinInterval(absence.endDate, { start: daysInPeriod[0], end: daysInPeriod[daysInPeriod.length - 1]}) ? absence.endDate : daysInPeriod[daysInPeriod.length-1];
         
-        // Ensure we don't exceed array bounds if absence bleeds into next year
-        const colSpan = Math.min(duration, daysInYear.length - i);
+        let duration = differenceInCalendarDays(intervalEnd, day) + 1;
+        
+        // Ensure we don't exceed array bounds
+        const colSpan = Math.min(duration, daysInPeriod.length - i);
         
         const absenceText = absence.replacement
           ? `${format(absence.startDate, 'dd.MM.yyyy')} - ${format(absence.endDate, 'dd.MM.yyyy')}, Исполняющий обязанности: ${absence.replacement}`
@@ -99,11 +100,11 @@ export function CalendarGrid({
       <table className="min-w-full border-collapse table-fixed">
         <colgroup>
           <col style={{ width: '12rem' }} />
-          {daysInYear.map((_, i) => (
+          {daysInPeriod.map((_, i) => (
             <col key={i} style={{ width: '2.5rem' }} />
           ))}
         </colgroup>
-        <CalendarGridHeaders daysInYear={daysInYear} holidays={holidays} />
+        <CalendarGridHeaders daysInPeriod={daysInPeriod} holidays={holidays} />
         <tbody className="text-sm">
           {employees.map(employee => (
             <tr key={employee.id} className="border-t hover:bg-muted/30">
