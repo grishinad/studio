@@ -22,6 +22,27 @@ type CalendarGridProps = {
   onNextMonth: () => void;
 };
 
+const getAbsenceTypeColor = (absenceType: string) => {
+  switch (absenceType) {
+    case 'отпуск ежегодный':
+      return 'bg-green-400/80 hover:bg-green-400 text-green-950';
+    case 'командировка':
+      return 'bg-pink-400/80 hover:bg-pink-400 text-pink-950';
+    case 'больничный':
+      return 'bg-orange-400/80 hover:bg-orange-400 text-orange-950';
+    case 'отпуск декретный':
+      return 'bg-blue-400/80 hover:bg-blue-400 text-blue-950';
+    case 'отгул за свой счет':
+      return 'bg-slate-400/80 hover:bg-slate-400 text-slate-950';
+    case 'прогул':
+      return 'bg-red-500/80 hover:bg-red-500 text-white';
+    case 'другое':
+      return 'bg-teal-400/80 hover:bg-teal-400 text-teal-950';
+    default:
+      return 'bg-primary/80 hover:bg-primary text-primary-foreground';
+  }
+};
+
 export function CalendarGrid({
   daysInPeriod,
   employees,
@@ -66,7 +87,7 @@ export function CalendarGrid({
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <div className="bg-primary/80 hover:bg-primary transition-colors duration-200 text-primary-foreground rounded-lg h-full flex items-center justify-center text-xs px-2 shadow cursor-help">
+                  <div className={cn("transition-colors duration-200 rounded-lg h-full flex items-center justify-center text-xs px-2 shadow cursor-help", getAbsenceTypeColor(absence.absenceType))}>
                     <span className="truncate">{absence.absenceType}</span>
                   </div>
                 </TooltipTrigger>
@@ -111,7 +132,7 @@ export function CalendarGrid({
         <tbody className="text-sm">
           {employees.map(employee => (
             <tr key={employee.id} className="border-t hover:bg-muted/30">
-              <th className="sticky left-0 bg-card hover:bg-muted/30 p-2 font-medium text-left border-r whitespace-nowrap">
+              <th className="sticky left-0 bg-card hover:bg-muted/30 p-2 font-medium text-left border-r whitespace-nowrap z-10">
                 {employee.name}
               </th>
               {renderEmployeeRow(employee)}
