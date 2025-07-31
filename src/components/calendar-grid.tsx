@@ -53,7 +53,6 @@ export function CalendarGrid({
   };
   
   const renderOrganizationRow = (organization: Organization) => {
-    const organizationAbsences = getAbsencesForOrganization(organization.id);
     const cells = [];
     let i = 0;
     while (i < daysInPeriod.length) {
@@ -69,20 +68,21 @@ export function CalendarGrid({
         let duration = differenceInCalendarDays(intervalEnd, day) + 1;
         
         const colSpan = Math.min(duration, daysInPeriod.length - i);
-        
-        const absenceBarText = `${absence.absenceType} (${format(absence.startDate, 'dd.MM')} - ${format(absence.endDate, 'dd.MM')})`;
 
         cells.push(
           <td
             key={format(day, 'yyyy-MM-dd')}
             colSpan={colSpan}
-            className="p-0.5 h-5"
+            className="p-0.5"
           >
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <div className={cn("transition-colors duration-200 rounded-md h-full flex items-center justify-center text-xs px-2 shadow-sm cursor-help", getAbsenceTypeColor(absence.absenceType))}>
-                    <span className="truncate">{absenceBarText}</span>
+                  <div className={cn("transition-colors duration-200 rounded-md h-full flex flex-col items-center justify-center text-xs px-2 shadow-sm cursor-help text-center leading-tight", getAbsenceTypeColor(absence.absenceType))}>
+                    <span className="truncate w-full">{absence.absenceType}</span>
+                    <span className="truncate w-full text-xs">
+                      ({format(absence.startDate, 'dd.MM')} - {format(absence.endDate, 'dd.MM')})
+                    </span>
                   </div>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -103,7 +103,7 @@ export function CalendarGrid({
           <td
             key={format(day, 'yyyy-MM-dd')}
             className={cn(
-              'h-5 w-10 border-r',
+              'h-full w-10 border-r',
               isWeekend(day) && 'bg-muted/50',
             )}
           />
@@ -111,6 +111,7 @@ export function CalendarGrid({
         i++;
       }
     }
+    const organizationAbsences = getAbsencesForOrganization(organization.id);
     return cells;
   };
 
@@ -130,7 +131,7 @@ export function CalendarGrid({
         />
         <tbody className="text-sm">
           {organizations.map(organization => (
-            <tr key={organization.id} className="border-t hover:bg-muted/30">
+            <tr key={organization.id} className="border-t hover:bg-muted/30 h-10">
               <th className="sticky left-0 bg-card hover:bg-muted/30 p-2 font-medium text-left border-r whitespace-nowrap z-10">
                 <div className="font-semibold">{organization.name}</div>
                 {organization.chief && <div className="text-xs font-normal text-muted-foreground">{organization.chief}</div>}
