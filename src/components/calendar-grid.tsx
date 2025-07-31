@@ -65,18 +65,14 @@ export function CalendarGrid({
       );
 
       if (absence) {
-        // Calculate duration only within the current view
         const intervalStart = isWithinInterval(absence.startDate, { start: daysInPeriod[0], end: daysInPeriod[daysInPeriod.length - 1]}) ? absence.startDate : daysInPeriod[0];
         const intervalEnd = isWithinInterval(absence.endDate, { start: daysInPeriod[0], end: daysInPeriod[daysInPeriod.length - 1]}) ? absence.endDate : daysInPeriod[daysInPeriod.length-1];
         
         let duration = differenceInCalendarDays(intervalEnd, day) + 1;
         
-        // Ensure we don't exceed array bounds
         const colSpan = Math.min(duration, daysInPeriod.length - i);
         
-        const absenceText = absence.replacement
-          ? `${format(absence.startDate, 'dd.MM.yyyy')} - ${format(absence.endDate, 'dd.MM.yyyy')}, Исполняющий обязанности: ${absence.replacement}`
-          : `${format(absence.startDate, 'dd.MM.yyyy')} - ${format(absence.endDate, 'dd.MM.yyyy')}`;
+        const absenceBarText = `${absence.absenceType} (${format(absence.startDate, 'dd.MM')} - ${format(absence.endDate, 'dd.MM')})`;
 
         cells.push(
           <td
@@ -88,11 +84,15 @@ export function CalendarGrid({
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div className={cn("transition-colors duration-200 rounded-lg h-full flex items-center justify-center text-xs px-2 shadow cursor-help", getAbsenceTypeColor(absence.absenceType))}>
-                    <span className="truncate">{absence.absenceType}</span>
+                    <span className="truncate">{absenceBarText}</span>
                   </div>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>{absenceText}</p>
+                  <div className="space-y-1">
+                    <p className="font-bold text-base">{absence.absenceType}</p>
+                    <p>{format(absence.startDate, 'dd.MM.yyyy')} - {format(absence.endDate, 'dd.MM.yyyy')}</p>
+                    {absence.replacement && <p>Исполняющий обязанности: {absence.replacement}</p>}
+                  </div>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
