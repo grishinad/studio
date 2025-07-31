@@ -124,9 +124,6 @@ export default function YearlyAbsenceTracker() {
         <h1 className="text-3xl font-bold tracking-tight text-foreground">
           Трекер отсутствий
         </h1>
-        <p className="text-muted-foreground">
-          Планируйте и визуализируйте отсутствия по организациям в течение года.
-        </p>
       </header>
 
       <div className="p-4 sm:p-6 bg-card border rounded-lg shadow-sm space-y-6">
