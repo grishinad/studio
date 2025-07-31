@@ -103,13 +103,13 @@ export default function YearlyAbsenceTracker() {
 
   const handleYearChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newYear = parseInt(e.target.value, 10);
-    if (!isNaN(newYear) && String(newYear).length <= 4) {
-        if (String(newYear).length === 4) {
-            setYear(newYear);
-            setHolidays([]); // Clear holidays when year changes
-        }
+    if (!isNaN(newYear) && newYear > 0) {
+      setYear(newYear);
+      if (String(newYear).length === 4) {
+        setHolidays([]); // Clear holidays when year changes
+      }
     } else if (e.target.value === '') {
-        // Allow clearing the input
+       setYear(0); // Or some other indicator of empty
     }
   };
 
@@ -136,7 +136,7 @@ export default function YearlyAbsenceTracker() {
               <Input
                 id="year-input"
                 type="number"
-                defaultValue={year}
+                value={year > 0 ? year : ''}
                 onChange={handleYearChange}
                 className="max-w-[120px]"
                 placeholder="ГГГГ"
