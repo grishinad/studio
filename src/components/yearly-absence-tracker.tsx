@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { getDaysInMonthForYear, MONTHS } from '@/lib/dates';
-import type { Absence, Organization } from '@/types';
+import type { Absence, Organization, AbsenceType } from '@/types';
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import type { DateRange } from 'react-day-picker';
 import { fetchDataForMonth, addOrganization, addAbsence } from '@/services/api';
@@ -72,7 +72,7 @@ export default function YearlyAbsenceTracker() {
   const handleAddAbsence = async (
     organizationId: string,
     dateRange: DateRange,
-    absenceType: string,
+    absenceType: AbsenceType,
     replacement?: string
   ) => {
     if (dateRange.from && dateRange.to) {

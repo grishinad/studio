@@ -10,6 +10,7 @@ import { CalendarGridHeaders } from '@/components/calendar-grid-headers';
 import { isWeekend } from '@/lib/dates';
 import { cn } from '@/lib/utils';
 import type { Absence, Organization } from '@/types';
+import { absenceTypeToString, absenceTypeToColorClass } from '@/types';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 
 type CalendarGridProps = {
@@ -18,27 +19,6 @@ type CalendarGridProps = {
   absences: Absence[];
   onPrevMonth: () => void;
   onNextMonth: () => void;
-};
-
-const getAbsenceTypeColor = (absenceType: string) => {
-  switch (absenceType) {
-    case 'отпуск ежегодный':
-      return 'bg-green-400/80 hover:bg-green-400 text-green-950';
-    case 'командировка':
-      return 'bg-pink-400/80 hover:bg-pink-400 text-pink-950';
-    case 'больничный':
-      return 'bg-orange-400/80 hover:bg-orange-400 text-orange-950';
-    case 'отпуск декретный':
-      return 'bg-blue-400/80 hover:bg-blue-400 text-blue-950';
-    case 'отгул за свой счет':
-      return 'bg-slate-400/80 hover:bg-slate-400 text-slate-950';
-    case 'прогул':
-      return 'bg-red-500/80 hover:bg-red-500 text-white';
-    case 'другое':
-      return 'bg-teal-400/80 hover:bg-teal-400 text-teal-950';
-    default:
-      return 'bg-primary/80 hover:bg-primary text-primary-foreground';
-  }
 };
 
 export function CalendarGrid({
@@ -69,6 +49,8 @@ export function CalendarGrid({
         let duration = differenceInCalendarDays(intervalEnd, day) + 1;
         
         const colSpan = Math.min(duration, daysInPeriod.length - i);
+        const absenceTypeName = absenceTypeToString(absence.absenceType);
+        const absenceColorClass = absenceTypeToColorClass(absence.absenceType);
 
         cells.push(
           <td
@@ -79,8 +61,8 @@ export function CalendarGrid({
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <div className={cn("transition-colors duration-200 rounded-md h-full flex flex-col items-center justify-center text-xs px-2 shadow-sm cursor-help text-center leading-tight", getAbsenceTypeColor(absence.absenceType))}>
-                    <span className="truncate w-full">{absence.absenceType}</span>
+                  <div className={cn("transition-colors duration-200 rounded-md h-full flex flex-col items-center justify-center text-xs px-2 shadow-sm cursor-help text-center leading-tight", absenceColorClass)}>
+                    <span className="truncate w-full">{absenceTypeName}</span>
                     <span className="truncate w-full text-xs">
                       ({format(absence.startDate, 'dd.MM')} - {format(absence.endDate, 'dd.MM')})
                     </span>
@@ -88,7 +70,7 @@ export function CalendarGrid({
                 </TooltipTrigger>
                 <TooltipContent>
                   <div className="space-y-1">
-                    <p className="font-bold text-base">{absence.absenceType}</p>
+                    <p className="font-bold text-base">{absenceTypeName}</p>
                     <p>{format(absence.startDate, 'dd.MM.yyyy')} - {format(absence.endDate, 'dd.MM.yyyy')}</p>
                     {organization.chief && <p>Главный врач: {organization.chief}</p>}
                     {absence.replacement && <p>Исполняющий обязанности: {absence.replacement}</p>}
@@ -104,7 +86,7 @@ export function CalendarGrid({
           <td
             key={format(day, 'yyyy-MM-dd')}
             className={cn(
-              'h-full w-10 border-r',
+              'h-8 w-10 border-r',
               isWeekend(day) && 'bg-muted/50',
             )}
           />

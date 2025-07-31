@@ -39,7 +39,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
-import type { Organization } from '@/types';
+import { AbsenceType, Organization, absenceTypeDetails } from '@/types';
 import { useState } from 'react';
 import { ru } from 'date-fns/locale';
 import { Input } from './ui/input';
@@ -51,7 +51,7 @@ const formSchema = z
       from: z.date({ required_error: 'Требуется дата начала.' }),
       to: z.date({ required_error: 'Требуется дата окончания.' }),
     }),
-    absenceType: z.string({ required_error: 'Пожалуйста, выберите тип отсутствия.' }),
+    absenceType: z.nativeEnum(AbsenceType, { required_error: 'Пожалуйста, выберите тип отсутствия.' }),
     replacement: z.string().optional(),
   })
   .refine(data => data.dateRange.from <= data.dateRange.to, {
@@ -64,7 +64,7 @@ type AddAbsenceDialogProps = {
   onAddAbsence: (
     organizationId: string,
     dateRange: DateRange,
-    absenceType: string,
+    absenceType: AbsenceType,
     replacement?: string
   ) => Promise<void>;
 };
@@ -85,16 +85,6 @@ export function AddAbsenceDialog({
       setIsOpen(false);
     }
   }
-
-  const absenceTypes = [
-    'отпуск ежегодный',
-    'командировка',
-    'больничный',
-    'отпуск декретный',
-    'отгул за свой счет',
-    'прогул',
-    'другое',
-  ];
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -148,8 +138,8 @@ export function AddAbsenceDialog({
                 <FormItem>
                   <FormLabel>Тип отсутствия</FormLabel>
                   <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
+                     onValueChange={(value) => field.onChange(parseInt(value, 10))}
+                     defaultValue={field.value !== undefined ? String(field.value) : undefined}
                   >
                     <FormControl>
                       <SelectTrigger>
@@ -157,9 +147,9 @@ export function AddAbsenceDialog({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {absenceTypes.map(type => (
-                        <SelectItem key={type} value={type}>
-                          {type}
+                      {Object.entries(absenceTypeDetails).map(([key, { name }]) => (
+                        <SelectItem key={key} value={key}>
+                          {name}
                         </SelectItem>
                       ))}
                     </SelectContent>

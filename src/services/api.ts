@@ -1,11 +1,11 @@
 'use server';
 
-import type { Absence, Organization } from "@/types";
+import { Absence, AbsenceType, Organization } from "@/types";
 
 type BackendAbsence = {
   from: number; // timestamp
   to: number; // timestamp
-  type: string;
+  type: AbsenceType;
   deputy?: string;
 };
 
@@ -33,14 +33,14 @@ export const fetchDataForMonth = async (year: number, month: number): Promise<{ 
         organization: 'ООО "Ромашка"',
         chief: 'Иванов Иван Иванович',
         absences: [
-          { from: new Date(year, month, 10).getTime(), to: new Date(year, month, 14).getTime(), type: 'отпуск ежегодный', deputy: 'Сергей Смирнов' },
+          { from: new Date(year, month, 10).getTime(), to: new Date(year, month, 14).getTime(), type: AbsenceType.ANNUAL_LEAVE, deputy: 'Сергей Смирнов' },
         ]
       },
       {
         organization: 'ИП Петров',
         chief: 'Петров Петр Петрович',
         absences: [
-            { from: new Date(year, month, 20).getTime(), to: new Date(year, month, 28).getTime(), type: 'больничный' },
+            { from: new Date(year, month, 20).getTime(), to: new Date(year, month, 28).getTime(), type: AbsenceType.SICK_LEAVE },
         ]
       },
       {
@@ -100,7 +100,7 @@ export const addOrganization = async (name: string): Promise<Organization> => {
 export const addAbsence = async (
   organizationId: string,
   dateRange: { from: Date; to: Date },
-  absenceType: string,
+  absenceType: AbsenceType,
   replacement?: string
 ): Promise<Absence> => {
   console.log('Submitting new absence:', {
