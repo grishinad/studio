@@ -54,20 +54,22 @@ export function CalendarGrid({
     let i = 0;
     while (i < daysInPeriod.length) {
       const day = daysInPeriod[i];
-      const absence = organizationAbsences.find(a =>
+      const absence = organizationAbsences.find(a => 
         isWithinInterval(day, { start: a.startDate, end: a.endDate })
       );
 
       if (absence) {
         const absenceInterval = { start: absence.startDate, end: absence.endDate };
         
-        if (absenceInterval.start > periodInterval.end || absenceInterval.end < periodInterval.start) {
+        if (isWithinInterval(absence.startDate, periodInterval) || isWithinInterval(absence.endDate, periodInterval) || (absence.startDate < periodInterval.start && absence.endDate > periodInterval.end)) {
+          // Absence is within the current month view
+        } else {
             i++;
             continue;
         }
 
         const intervalStart = absence.startDate > periodInterval.start ? absence.startDate : periodInterval.start;
-        let duration = differenceInCalendarDays(absence.endDate, day) + 1;
+        const duration = differenceInCalendarDays(absence.endDate, intervalStart) + 1;
         
         const colSpan = Math.min(duration, daysInPeriod.length - i);
         const absenceTypeName = absenceTypeToString(absence.absenceType);
@@ -115,7 +117,9 @@ export function CalendarGrid({
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                     <AbsenceInfo isTooltip={true} />
+                     <div className="h-full w-full">
+                        <AbsenceInfo isTooltip={true} />
+                     </div>
                   </TooltipTrigger>
                   <TooltipContent>
                     <AbsenceDetails />
