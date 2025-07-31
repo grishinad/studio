@@ -131,52 +131,57 @@ export default function YearlyAbsenceTracker() {
 
   return (
     <div className="space-y-6">
-      <header className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">
-          Трекер отсутствий
-        </h1>
-      </header>
+      <div className="px-4 sm:px-6">
+        <header className="space-y-2 pt-6">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">
+            Трекер отсутствий
+          </h1>
+        </header>
+      </div>
+      
+      <div className="px-4 sm:px-6">
+        <div className="p-4 sm:p-6 bg-card border rounded-lg shadow-sm space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-end gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="year-input">Год</Label>
+                <Input
+                  id="year-input"
+                  type="number"
+                  value={year === 0 ? '' : year}
+                  onChange={handleYearChange}
+                  className="w-full sm:w-[120px]"
+                  placeholder="ГГГГ"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="month-select">Месяц</Label>
+                <Select value={String(month)} onValueChange={handleMonthChange}>
+                  <SelectTrigger id="month-select" className="w-full sm:w-[180px]">
+                    <SelectValue placeholder="Выберите месяц" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {MONTHS.map((name, index) => (
+                      <SelectItem key={index} value={String(index)}>
+                        {name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
 
-      <div className="p-4 sm:p-6 bg-card border rounded-lg shadow-sm space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-          <div className="flex flex-col sm:flex-row sm:items-end gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="year-input">Год</Label>
-              <Input
-                id="year-input"
-                type="number"
-                value={year === 0 ? '' : year}
-                onChange={handleYearChange}
-                className="w-full sm:w-[120px]"
-                placeholder="ГГГГ"
+            <div className="flex flex-col sm:flex-row gap-2">
+              <AddAbsenceDialog
+                organizations={organizations}
+                onAddAbsence={handleAddAbsence}
               />
+              <AddOrganizationDialog onAddOrganization={handleAddOrganization} />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="month-select">Месяц</Label>
-              <Select value={String(month)} onValueChange={handleMonthChange}>
-                <SelectTrigger id="month-select" className="w-full sm:w-[180px]">
-                  <SelectValue placeholder="Выберите месяц" />
-                </SelectTrigger>
-                <SelectContent>
-                  {MONTHS.map((name, index) => (
-                    <SelectItem key={index} value={String(index)}>
-                      {name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-2">
-             <AddAbsenceDialog
-              organizations={organizations}
-              onAddAbsence={handleAddAbsence}
-            />
-            <AddOrganizationDialog onAddOrganization={handleAddOrganization} />
           </div>
         </div>
       </div>
+
       {isLoading ? (
         <div className="text-center p-8">Загрузка данных...</div>
       ) : (
