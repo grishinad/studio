@@ -12,6 +12,8 @@ import { cn } from '@/lib/utils';
 import type { Absence, Organization } from '@/types';
 import { absenceTypeToString, absenceTypeToColorClass } from '@/types';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 
 type CalendarGridProps = {
   daysInPeriod: Date[];
@@ -32,6 +34,8 @@ export function CalendarGrid({
     return absences.filter(absence => absence.organizationId === organizationId);
   };
   
+  const isMobile = useIsMobile();
+
   const renderOrganizationRow = (organization: Organization) => {
     const organizationAbsences = getAbsencesForOrganization(organization.id);
     const cells = [];
@@ -51,6 +55,24 @@ export function CalendarGrid({
         const colSpan = Math.min(duration, daysInPeriod.length - i);
         const absenceTypeName = absenceTypeToString(absence.absenceType);
         const absenceColorClass = absenceTypeToColorClass(absence.absenceType);
+        
+        const AbsenceInfo = ({isTooltip}: {isTooltip?: boolean}) => (
+          <div className={cn("transition-colors duration-200 rounded-md h-full flex flex-col items-center justify-center text-xs px-2 shadow-sm text-center leading-tight", absenceColorClass, isTooltip ? "cursor-help" : "cursor-pointer")}>
+            <span className="truncate w-full">{absenceTypeName}</span>
+            <span className="truncate w-full text-xs">
+              ({format(absence.startDate, 'dd.MM')} - {format(absence.endDate, 'dd.MM')})
+            </span>
+          </div>
+        )
+        
+        const AbsenceDetails = () => (
+          <div className="space-y-1 text-sm">
+            <p className="font-bold text-base">{absenceTypeName}</p>
+            <p>{format(absence.startDate, 'dd.MM.yyyy')} - {format(absence.endDate, 'dd.MM.yyyy')}</p>
+            {organization.chief && <p>Главный врач: {organization.chief}</p>}
+            {absence.replacement && <p>Исполняющий обязанности: {absence.replacement}</p>}
+          </div>
+        )
 
         cells.push(
           <td
@@ -58,26 +80,32 @@ export function CalendarGrid({
             colSpan={colSpan}
             className="p-0.5 border-r"
           >
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div className={cn("transition-colors duration-200 rounded-md h-full flex flex-col items-center justify-center text-xs px-2 shadow-sm cursor-help text-center leading-tight", absenceColorClass)}>
-                    <span className="truncate w-full">{absenceTypeName}</span>
-                    <span className="truncate w-full text-xs">
-                      ({format(absence.startDate, 'dd.MM')} - {format(absence.endDate, 'dd.MM')})
-                    </span>
+            {isMobile ? (
+              <Dialog>
+                <DialogTrigger asChild>
+                  <div className="h-full">
+                    <AbsenceInfo />
                   </div>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <div className="space-y-1">
-                    <p className="font-bold text-base">{absenceTypeName}</p>
-                    <p>{format(absence.startDate, 'dd.MM.yyyy')} - {format(absence.endDate, 'dd.MM.yyyy')}</p>
-                    {organization.chief && <p>Главный врач: {organization.chief}</p>}
-                    {absence.replacement && <p>Исполняющий обязанности: {absence.replacement}</p>}
-                  </div>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+                </DialogTrigger>
+                <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>{organization.name}</DialogTitle>
+                    </DialogHeader>
+                    <AbsenceDetails />
+                </DialogContent>
+              </Dialog>
+            ) : (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                     <AbsenceInfo isTooltip />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <AbsenceDetails />
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
           </td>
         );
         i += colSpan;
