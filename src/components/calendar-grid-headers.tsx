@@ -19,14 +19,14 @@ export function CalendarGridHeaders({
     <thead className="text-xs text-muted-foreground sticky top-0 z-20 bg-background/95 backdrop-blur">
       {/* Month Header */}
       <tr className="text-center">
-        <th rowSpan={2} className="sticky left-0 bg-background/95 p-2 font-semibold text-sm border-b border-r align-middle">
+        <th rowSpan={2} className="sticky left-0 bg-background/95 p-2 font-semibold text-sm border-b border-r border-border align-middle">
           Сотрудник
         </th>
         {monthHeaders.map(({ name, dayCount }) => (
           <th
             key={name}
             colSpan={dayCount}
-            className="p-1.5 font-semibold text-lg border-b border-r"
+            className="p-1.5 font-semibold text-lg border-b border-r border-border"
           >
             {name}
           </th>
@@ -39,7 +39,7 @@ export function CalendarGridHeaders({
           return (
             <th
               key={day.toISOString()}
-              className='p-1 font-normal border-b border-r w-10 text-sm'
+              className='p-1 font-normal border-b border-r border-border w-10 text-sm'
             >
               <div>{dayOfWeek}</div>
               <span className="text-lg font-medium">{getDayOfMonth(day)}</span>
