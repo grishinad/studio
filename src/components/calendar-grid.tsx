@@ -53,6 +53,7 @@ export function CalendarGrid({
   };
   
   const renderOrganizationRow = (organization: Organization) => {
+    const organizationAbsences = getAbsencesForOrganization(organization.id);
     const cells = [];
     let i = 0;
     while (i < daysInPeriod.length) {
@@ -111,7 +112,6 @@ export function CalendarGrid({
         i++;
       }
     }
-    const organizationAbsences = getAbsencesForOrganization(organization.id);
     return cells;
   };
 
