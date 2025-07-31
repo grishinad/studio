@@ -11,28 +11,24 @@ import { ru } from 'date-fns/locale';
 import { CalendarGridHeaders } from '@/components/calendar-grid-headers';
 import { isWeekend } from '@/lib/dates';
 import { cn } from '@/lib/utils';
-import type { Absence, Employee, Holiday } from '@/types';
+import type { Absence, Employee } from '@/types';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 
 type CalendarGridProps = {
   daysInPeriod: Date[];
   employees: Employee[];
   absences: Absence[];
-  holidays: Holiday[];
 };
 
 export function CalendarGrid({
   daysInPeriod,
   employees,
   absences,
-  holidays,
 }: CalendarGridProps) {
   const getAbsencesForEmployee = (employeeId: string) => {
     return absences.filter(absence => absence.employeeId === employeeId);
   };
   
-  const isHoliday = (day: Date) => holidays.some(h => isSameDay(h.date, day));
-
   const renderEmployeeRow = (employee: Employee) => {
     const employeeAbsences = getAbsencesForEmployee(employee.id);
     const cells = [];
@@ -85,7 +81,6 @@ export function CalendarGrid({
             className={cn(
               'h-14 w-10 border-r',
               isWeekend(day) && 'bg-muted/50',
-              isHoliday(day) && 'bg-accent/30'
             )}
           />
         );
@@ -104,7 +99,7 @@ export function CalendarGrid({
             <col key={i} style={{ width: '2.5rem' }} />
           ))}
         </colgroup>
-        <CalendarGridHeaders daysInPeriod={daysInPeriod} holidays={holidays} />
+        <CalendarGridHeaders daysInPeriod={daysInPeriod} />
         <tbody className="text-sm">
           {employees.map(employee => (
             <tr key={employee.id} className="border-t hover:bg-muted/30">

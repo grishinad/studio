@@ -11,8 +11,3 @@ export type Absence = {
   absenceType: string;
   replacement?: string;
 };
-
-export type Holiday = {
-  date: Date;
-  name: string;
-};
