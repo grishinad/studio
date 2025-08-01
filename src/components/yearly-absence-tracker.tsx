@@ -18,6 +18,7 @@ import type { Absence, Organization, AbsenceType } from '@/types';
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import type { DateRange } from 'react-day-picker';
 import { fetchDataForMonth, addOrganization, addAbsence } from '@/services/api';
+import { startOfMonth, endOfMonth } from 'date-fns';
 
 type YearlyAbsenceTrackerProps = {
   isPublicView?: boolean;
@@ -36,7 +37,9 @@ export default function YearlyAbsenceTracker({ isPublicView = false }: YearlyAbs
   const loadData = useCallback(async (y: number, m: number) => {
     setIsLoading(true);
     try {
-      const { organizations: orgs, absences: abs } = await fetchDataForMonth(y, m);
+      const startDate = startOfMonth(new Date(y, m));
+      const endDate = endOfMonth(new Date(y, m));
+      const { organizations: orgs, absences: abs } = await fetchDataForMonth(startDate, endDate);
       setOrganizations(orgs);
       setAbsences(abs);
     } catch (error) {
@@ -135,7 +138,7 @@ export default function YearlyAbsenceTracker({ isPublicView = false }: YearlyAbs
   };
 
   return (
-    <div className="space-y-6">
+    <>
       <div className="px-4 sm:px-6">
         <header className="space-y-2 pt-6">
           <h1 className="text-3xl font-bold tracking-tight text-foreground">
@@ -145,7 +148,7 @@ export default function YearlyAbsenceTracker({ isPublicView = false }: YearlyAbs
       </div>
       
       <div className="px-4 sm:px-6">
-        <div className="p-4 sm:p-6 bg-card border rounded-lg shadow-sm space-y-6">
+        <div className="p-4 sm:p-6 bg-card border rounded-lg shadow-sm space-y-6 mt-6">
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
             <div className="flex flex-col sm:flex-row sm:items-end gap-4">
               <div className="space-y-2">
@@ -189,17 +192,19 @@ export default function YearlyAbsenceTracker({ isPublicView = false }: YearlyAbs
         </div>
       </div>
 
-      {isLoading ? (
-        <div className="text-center p-8">Загрузка данных...</div>
-      ) : (
-        <CalendarGrid
-          daysInPeriod={daysInMonth}
-          organizations={organizations}
-          absences={absences}
-          onPrevMonth={handlePrevMonth}
-          onNextMonth={handleNextMonth}
-        />
-      )}
-    </div>
+      <div className="mt-6">
+        {isLoading ? (
+          <div className="text-center p-8">Загрузка данных...</div>
+        ) : (
+          <CalendarGrid
+            daysInPeriod={daysInMonth}
+            organizations={organizations}
+            absences={absences}
+            onPrevMonth={handlePrevMonth}
+            onNextMonth={handleNextMonth}
+          />
+        )}
+      </div>
+    </>
   );
 }

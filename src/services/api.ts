@@ -19,13 +19,16 @@ type ApiResponse = {
   items: BackendOrganizationData[];
 };
 
-export const fetchDataForMonth = async (year: number, month: number): Promise<{ organizations: Organization[], absences: Absence[] }> => {
+export const fetchDataForMonth = async (startDate: Date, endDate: Date): Promise<{ organizations: Organization[], absences: Absence[] }> => {
   // Mocking the API response as the backend is not implemented.
   // In a real scenario, you would fetch from an actual API endpoint.
-  // const response = await fetch(`https://your-api.com/data?year=${year}&month=${month}`);
+  // const response = await fetch(`https://your-api.com/data?start_date=${startDate.toISOString()}&end_date=${endDate.toISOString()}`);
   // const data: ApiResponse = await response.json();
   
-  console.log(`Fetching data for ${year}-${month + 1}`);
+  console.log(`Fetching data from ${startDate.toISOString()} to ${endDate.toISOString()}`);
+  
+  const year = startDate.getFullYear();
+  const month = startDate.getMonth();
 
   const mockData: ApiResponse = {
     items: [
