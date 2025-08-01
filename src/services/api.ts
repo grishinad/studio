@@ -3,14 +3,14 @@
 import { Absence, AbsenceType, Organization } from "@/types";
 
 type BackendAbsence = {
-  from: number; // timestamp
-  to: number; // timestamp
+  start_date: number; // timestamp
+  end_date: number; // timestamp
   type: number; // Now a number
   deputy?: string;
 };
 
 type BackendOrganizationData = {
-  organization: string;
+  name: string;
   chief: string;
   absences: BackendAbsence[];
 };
@@ -19,49 +19,24 @@ type ApiResponse = {
   items: BackendOrganizationData[];
 };
 
-export const fetchDataForMonth = async (startDate: Date, endDate: Date): Promise<{ organizations: Organization[], absences: Absence[] }> => {
+const API_HOST = 'http://localhost:8000'
+
+export const fetchDataForMonth = async (year: number, month: number): Promise<{ organizations: Organization[], absences: Absence[] }> => {
   // Mocking the API response as the backend is not implemented.
   // In a real scenario, you would fetch from an actual API endpoint.
-  // const response = await fetch(`https://your-api.com/data?start_date=${startDate.toISOString()}&end_date=${endDate.toISOString()}`);
-  // const data: ApiResponse = await response.json();
-  
-  console.log(`Fetching data from ${startDate.toISOString()} to ${endDate.toISOString()}`);
-  
-  const year = startDate.getFullYear();
-  const month = startDate.getMonth();
+  console.log(`Fetching data for ${year}-${month + 1}`);
 
-  const mockData: ApiResponse = {
-    items: [
-      {
-        organization: 'ООО "Ромашка"',
-        chief: 'Иванов Иван Иванович',
-        absences: [
-          { from: new Date(year, month, 10).getTime(), to: new Date(year, month, 14).getTime(), type: 0, deputy: 'Сергей Смирнов' }, // AbsenceType.ANNUAL_LEAVE
-        ]
-      },
-      {
-        organization: 'ИП Петров',
-        chief: 'Петров Петр Петрович',
-        absences: [
-            { from: new Date(year, month, 20).getTime(), to: new Date(year, month, 28).getTime(), type: 2 }, // AbsenceType.SICK_LEAVE
-        ]
-      },
-      {
-        organization: 'АО "Вымпел"',
-        chief: 'Сидоров Сидор Сидорович',
-        absences: []
-      }
-    ]
-  };
+  const response = await fetch(`${API_HOST}/data?year=${year}&month=${month+1}`);
+  const data: BackendOrganizationData[] = await response.json();
 
   const organizations: Organization[] = [];
   const absences: Absence[] = [];
 
-  mockData.items.forEach((item, index) => {
+  data.forEach((item, index) => {
     const orgId = String(index + 1);
     organizations.push({
       id: orgId,
-      name: item.organization,
+      name: item.name,
       chief: item.chief,
     });
 
@@ -69,8 +44,8 @@ export const fetchDataForMonth = async (startDate: Date, endDate: Date): Promise
       absences.push({
         id: crypto.randomUUID(),
         organizationId: orgId,
-        startDate: new Date(backendAbsence.from),
-        endDate: new Date(backendAbsence.to),
+        startDate: new Date(backendAbsence.start_date),
+        endDate: new Date(backendAbsence.end_date),
         absenceType: backendAbsence.type as AbsenceType,
         replacement: backendAbsence.deputy,
       });
@@ -81,23 +56,16 @@ export const fetchDataForMonth = async (startDate: Date, endDate: Date): Promise
 };
 
 export const addOrganization = async (name: string, chief?: string): Promise<Organization> => {
+  
   console.log(`Submitting new organization: ${name}`, { chief });
-  // In a real app, you would make a POST request to your backend
-  // const response = await fetch('https://your-api.com/organizations', {
-  //   method: 'POST',
-  //   headers: { 'Content-Type': 'application/json' },
-  //   body: JSON.stringify({ organization: name, chief }),
-  // });
-  // const newOrganization = await response.json();
-  // return newOrganization;
+  
+  const response = await fetch(`${API_HOST}/organizations/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, chief }),
+  });
 
-  // Mocking the API response
-  const newOrganization: Organization = {
-    id: crypto.randomUUID(),
-    name,
-    chief: chief || 'Не назначен',
-  };
-  return Promise.resolve(newOrganization);
+  return await response.json();
 };
 
 export const addAbsence = async (
@@ -113,28 +81,18 @@ export const addAbsence = async (
     replacement,
   });
   // In a real app, you would make a POST request to your backend
-  // const response = await fetch('https://your-api.com/absences', {
-  //   method: 'POST',
-  //   headers: { 'Content-Type': 'application/json' },
-  //   body: JSON.stringify({ 
-  //      organizationId,
-  //      from: dateRange.from.getTime(),
-  //      to: dateRange.to.getTime(),
-  //      type: absenceType,
-  //      deputy: replacement
-  //   }),
-  // });
-  // const newAbsence = await response.json();
-  // return newAbsence;
-
-  // Mocking the API response
-  const newAbsence: Absence = {
-    id: crypto.randomUUID(),
-    organizationId,
-    startDate: dateRange.from,
-    endDate: dateRange.to,
-    absenceType,
-    replacement,
-  };
+  const response = await fetch(`${API_HOST}/absences`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ 
+       organization_id: organizationId,
+       start_date: dateRange.from.getTime(), // Use getTime() for timestamp
+       end_date: dateRange.to.getTime(), // Use getTime() for timestamp
+       type: absenceType,
+       deputy: replacement
+    }),
+  });
+  const newAbsence: Absence = await response.json();
+  
   return Promise.resolve(newAbsence);
 };
