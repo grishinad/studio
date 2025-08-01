@@ -30,6 +30,7 @@ export default function YearlyAbsenceTracker({ isPublicView = false }: YearlyAbs
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [absences, setAbsences] = useState<Absence[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedOrganizationId, setSelectedOrganizationId] = useState<string>('all');
   const { toast } = useToast();
 
   const daysInMonth = useMemo(() => getDaysInMonthForYear(year, month), [year, month]);
@@ -136,6 +137,14 @@ export default function YearlyAbsenceTracker({ isPublicView = false }: YearlyAbs
       setMonth(prev => prev + 1);
     }
   };
+  
+  const filteredOrganizations = useMemo(() => {
+    if (selectedOrganizationId === 'all') {
+      return organizations;
+    }
+    return organizations.filter(org => org.id === selectedOrganizationId);
+  }, [organizations, selectedOrganizationId]);
+
 
   return (
     <>
@@ -150,7 +159,7 @@ export default function YearlyAbsenceTracker({ isPublicView = false }: YearlyAbs
       <div className="px-4 sm:px-6">
         <div className="p-4 sm:p-6 bg-card border rounded-lg shadow-sm space-y-6 mt-6">
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-            <div className="flex flex-col sm:flex-row sm:items-end gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-end gap-4 flex-wrap">
               <div className="space-y-2">
                 <Label htmlFor="year-input">Год</Label>
                 <Input
@@ -177,6 +186,25 @@ export default function YearlyAbsenceTracker({ isPublicView = false }: YearlyAbs
                   </SelectContent>
                 </Select>
               </div>
+               <div className="space-y-2">
+                <Label htmlFor="org-select">Организация</Label>
+                <Select
+                  value={selectedOrganizationId}
+                  onValueChange={setSelectedOrganizationId}
+                >
+                  <SelectTrigger id="org-select" className="w-full sm:w-[220px]">
+                    <SelectValue placeholder="Выберите организацию" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Все организации</SelectItem>
+                    {organizations.map(org => (
+                      <SelectItem key={org.id} value={org.id}>
+                        {org.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
             {!isPublicView && (
@@ -198,7 +226,7 @@ export default function YearlyAbsenceTracker({ isPublicView = false }: YearlyAbs
         ) : (
           <CalendarGrid
             daysInPeriod={daysInMonth}
-            organizations={organizations}
+            organizations={filteredOrganizations}
             absences={absences}
             onPrevMonth={handlePrevMonth}
             onNextMonth={handleNextMonth}
